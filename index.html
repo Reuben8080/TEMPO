@@ -17,9 +17,9 @@
   --bg:#060606;
   --mono:'Space Mono',monospace;
   --serif:'DM Serif Display',serif;
-  --fw:56px;--fh:80px;--ffs:70px;
-  --ftop:5px;--fbot:-35px;
-  --frad:6px;--fc:#141414;--fd:#d0d0d0;
+  --fw:58px;--fh:82px;--ffs:72px;
+  --ftop:5px;--fbot:-36px;
+  --frad:7px;--fc:#141414;--fd:#d0d0d0;
 }
 
 html,body{
@@ -31,14 +31,14 @@ html,body{
 }
 
 /* ═══════════════════════════════════════════
-   FLIP ENGINE COMPONENTS
+   FLIP UNIT
 ═══════════════════════════════════════════ */
-.flip-row{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.flip-row{display:flex;align-items:center;gap:7px}
 .flip-sep{
   font-family:var(--mono);font-weight:700;
   font-size:var(--ffs);line-height:1;
   color:var(--fd);transition:color .8s ease;
-  padding-bottom:4px;
+  padding-bottom:3px;
 }
 .fu{
   position:relative;
@@ -93,15 +93,15 @@ html,body{
 @keyframes fDn{from{transform:rotateX(90deg)}to{transform:rotateX(0)}}
 
 /* ═══════════════════════════════════════════
-   THE HARD SPLIT HOME CONSOLE
+   HOME SCREEN (FLUID COMPRESSION RESILIENT)
 ═══════════════════════════════════════════ */
 #home{
   position:fixed;inset:0;
   display:flex;flex-direction:column;
   transition:opacity .48s ease;
   background:#0a0906;
-  padding-top:env(safe-area-inset-top);
-  padding-bottom:env(safe-area-inset-bottom);
+  padding-top:env(safe-area-inset-top, 0px);
+  padding-bottom:env(safe-area-inset-bottom, 0px);
 }
 #home.gone{opacity:0;pointer-events:none}
 
@@ -109,126 +109,126 @@ html,body{
   flex:1;min-height:0;
   display:flex;flex-direction:column;
   align-items:center;justify-content:center;
-  gap:clamp(8px, 1.8vh, 16px);
+  gap:clamp(10px, 2.5vh, 18px);
   cursor:pointer;touch-action:manipulation;
   position:relative;
   transition:background .2s;
 }
-.h-pa{background:#110e0a;--bg:#110e0a;border-bottom:1px solid #1c1812;}
-.h-pa:active{background:#15110d}
-.h-pb{background:#0a0c11;--bg:#0a0c11;border-top:1px solid #12161f;}
-.h-pb:active{background:#0d1017}
+.h-pa{background:#110e0a;--bg:#110e0a;border-bottom:1px solid #221e16}
+.h-pa:active{background:#140f0b}
+.h-pb{background:#0a0c11;--bg:#0a0c11;border-top:1px solid #141820}
+.h-pb:active{background:#0b0d14}
 
 .h-plbl{
   font-size:9px;letter-spacing:.38em;text-transform:uppercase;
-  font-weight:700;
+  font-weight:400;
 }
 .h-pa .h-plbl{color:#8a7458}
 .h-pb .h-plbl{color:#3e6080}
 
 #h-snd{
-  position:absolute;bottom:14px;right:18px;
+  position:absolute;bottom:16px;right:18px;
   font-size:8px;letter-spacing:.16em;text-transform:uppercase;
-  color:#423725;cursor:pointer;touch-action:manipulation;
-  transition:color .18s;padding:4px 8px;
-  z-index:10;
+  color:#3a3020;cursor:pointer;touch-action:manipulation;
+  transition:color .18s;padding:4px 0;
 }
-#h-snd.on{color:#c2904c}
+#h-snd.on{color:#b08040}
+#h-snd:active{color:#806030}
 
-/* Highly Fluid Compression Center Strip */
+/* Replaced rigid height with defensive vertical padding & layout scaling */
 .h-strip{
-  flex:0 0 clamp(145px, 24vh, 190px);
+  flex:0 0 auto;
   background:#0d0b08;
-  border-top:1px solid #1c1812;
-  border-bottom:1px solid #12161f;
+  border-top:1px solid #221e16;
+  border-bottom:1px solid #141820;
   display:flex;flex-direction:column;
   align-items:center;justify-content:center;
   gap:clamp(6px, 1.2vh, 10px);
-  padding:8px 24px;
+  padding:clamp(12px, 2.2vh, 20px) 28px;
 }
 .h-wordmark{
   font-family:var(--serif);
-  font-size:clamp(26px, 4.5vh, 32px);line-height:1;
+  font-size:clamp(28px, 4.5vh, 34px);line-height:1;
   color:#c09868;letter-spacing:.06em;
+  margin-bottom:2px;
 }
 .h-rule{
-  width:100px;height:1px;
-  background:linear-gradient(to right,transparent,#423725,transparent);
+  width:min(120px,60%);height:1px;
+  background:linear-gradient(to right,transparent,#3a3020,transparent);
   flex-shrink:0;
 }
-.h-pills{display:flex;gap:6px;flex-shrink:0}
+.h-pills{display:flex;gap:7px}
 .pill{
-  font-size:9px;letter-spacing:.05em;
-  padding:5px 12px;line-height:1;
-  background:#131108;color:#4a3f2c;
-  border:1px solid #242116;border-radius:2px;
+  font-size:9px;letter-spacing:.1em;
+  padding:7px 13px;line-height:1;
+  background:#131108;color:#383020;
+  border:1px solid #201e14;border-radius:2px;
   cursor:pointer;touch-action:manipulation;
-  transition:all .14s;
+  transition:background .14s,color .14s,border-color .14s;
 }
-.pill.on{background:#2c2210;color:#d4a24e;border-color:#523e1b}
+.pill.on{background:#2c2210;color:#d4a24e;border-color:#4a3818}
+.pill:active{background:#1c1a0e}
 .h-pname{
   font-size:8px;letter-spacing:.34em;text-transform:uppercase;
-  color:#7a6a50;min-height:10px;line-height:1;
+  color:#7a6a50;min-height:11px;
 }
 #sbtn{
-  font-size:9px;letter-spacing:.3em;text-transform:uppercase;
-  font-weight:700;color:#b08868;background:none;
-  border:1px solid #3d311e;
-  padding:10px 38px;cursor:pointer;
+  font-size:10px;letter-spacing:.34em;text-transform:uppercase;
+  color:#b08868;background:none;
+  border:1px solid #342a1a;
+  padding:clamp(10px, 1.5vh, 13px) 44px;cursor:pointer;
   touch-action:manipulation;line-height:1;
-  transition:all .14s;flex-shrink:0;
+  transition:background .14s,border-color .14s,color .14s;
 }
-#sbtn:active{background:#1c1307;border-color:#6e5031;color:#e6b883}
+#sbtn:active{background:#181006;border-color:#5a4228;color:#d4a870}
 .h-hint{
-  font-size:7px;letter-spacing:.2em;text-transform:uppercase;
-  color:#3b311f;line-height:1;
+  font-size:7px;letter-spacing:.24em;text-transform:uppercase;
+  color:#2e2618;
 }
 
 @media(min-width:768px){
   #home{flex-direction:row;padding:0}
-  .h-pa{border-bottom:none;border-right:1px solid #1c1812}
-  .h-pb{border-top:none;border-left:1px solid #12161f}
+  .h-pa{border-bottom:none;border-right:1px solid #221e16}
+  .h-pb{border-top:none;border-left:1px solid #141820}
   .h-strip{
-    flex:0 0 210px;height:100%;
+    flex:0 0 208px;padding:0 28px;gap:10px;
     border-top:none;border-bottom:none;
-    border-left:1px solid #1c1812;border-right:1px solid #12161f;
-    gap:14px;
+    border-left:1px solid #221e16;border-right:1px solid #141820;
   }
 }
 
 /* ═══════════════════════════════════════════
-   THE ACTIVE HORIZON SCREEN (50/50 TENSION)
+   CLOCK SCREEN
 ═══════════════════════════════════════════ */
 #clk{
   display:flex;flex-direction:column;
   width:100vw;height:100dvh;
   opacity:0;pointer-events:none;
   transition:opacity .48s ease;
-  background:#060606;
 }
 #clk.show{opacity:1;pointer-events:all}
 @media(min-width:768px){#clk{flex-direction:row}}
 
 .panel{
-  flex:1;min-height:0;position:relative;
+  flex:1;position:relative;
   display:flex;flex-direction:column;
   align-items:center;justify-content:center;
   cursor:pointer;touch-action:manipulation;
   transition:background-color .95s ease;
   gap:16px;
 }
-#pa{border-bottom:1px solid #141414}
+#pa{border-bottom:1px solid #161616}
 @media(min-width:768px){
-  #pa{border-bottom:none;border-right:1px solid #141414}
+  #pa{border-bottom:none;border-right:1px solid #161616}
 }
 
 .p-lbl{
-  position:absolute;top:max(18px, env(safe-area-inset-top));left:24px;
+  position:absolute;top:max(22px, env(safe-area-inset-top, 22px));left:24px;
   font-size:9px;letter-spacing:.32em;text-transform:uppercase;
-  font-weight:700;transition:color .8s ease;pointer-events:none;
+  transition:color .8s ease;pointer-events:none;
 }
 #sess-ctr{
-  position:absolute;top:max(18px, env(safe-area-inset-top));right:24px;
+  position:absolute;top:max(22px, env(safe-area-inset-top, 22px));right:24px;
   font-size:9px;letter-spacing:.16em;
   color:#242424;transition:color .5s;pointer-events:none;
 }
@@ -239,7 +239,7 @@ html,body{
 }
 .ov-ctr{
   font-weight:700;
-  font-size:clamp(48px,12vw,76px);
+  font-size:clamp(46px,12vw,78px);
   letter-spacing:-.025em;color:#c42020;
   display:none;line-height:1;
 }
@@ -252,30 +252,30 @@ html,body{
 }
 .inc-badge.show{opacity:1}
 
-/* Seamless Integrated Footer Overlay */
 #clk-footer{
   position:fixed;bottom:0;left:0;right:0;
   display:none;justify-content:space-between;align-items:center;
   padding:0 24px;
-  padding-bottom:max(8px,env(safe-area-inset-bottom));
+  padding-bottom:max(6px,env(safe-area-inset-bottom));
   pointer-events:none;z-index:20;
 }
 #clk-footer.show{display:flex}
 #clk-snd{
   font-size:8px;letter-spacing:.16em;text-transform:uppercase;
-  color:#222;cursor:pointer;
+  color:#202020;cursor:pointer;
   touch-action:manipulation;pointer-events:all;
-  transition:color .2s;padding:12px 16px;
+  transition:color .2s;padding:12px 0;
 }
-#clk-snd.on{color:#54462e}
+#clk-snd.on{color:#3e3420}
+#clk-snd:active{color:#706040}
 #exit-btn{
   font-size:8px;letter-spacing:.24em;text-transform:uppercase;
-  color:#222;background:none;border:none;
-  padding:12px 16px;cursor:pointer;
+  color:#1e1e1e;background:none;border:none;
+  padding:12px 0;cursor:pointer;
   touch-action:manipulation;pointer-events:all;
   transition:color .2s;
 }
-#exit-btn:hover, #exit-btn:active{color:#666}
+#exit-btn:active{color:#606060}
 
 @media(prefers-reduced-motion:reduce){
   *{transition:none!important;animation:none!important}
@@ -298,7 +298,7 @@ html,body{
     <div class="h-pills" id="h-pills"></div>
     <div class="h-pname" id="h-pname">CLASSIC</div>
     <button id="sbtn">START</button>
-    <div class="h-hint">tap panels to toggle index</div>
+    <div class="h-hint">SELECT PRESET BELOW · TAP PANELS TO CYCLE ALL</div>
   </div>
 
   <div class="h-panel h-pb" onclick="homeNext()">
@@ -340,7 +340,7 @@ const PRESETS=[
 const DELAY=5000, WARN_MS=5000, INC=120000;
 const NOTIF_5MIN=5*60*1000;
 
-// ── FLIP DIGIT ENGINE ────────────────────────────────
+// ── FLIP DIGIT ───────────────────────────────────────
 class FlipDigit{
   constructor(parent){
     this.el=document.createElement('div');
@@ -388,7 +388,7 @@ class FlipDigit{
   }
 }
 
-// ── FLIP DISPLAY ENGINE ──────────────────────────────
+// ── FLIP DISPLAY ─────────────────────────────────────
 class FlipDisplay{
   constructor(id){
     const w=document.getElementById(id);
@@ -423,17 +423,16 @@ class FlipDisplay{
   reset(){this.d.forEach(d=>{d.cur=null});this._ls=-1}
 }
 
-// ── RENDER SYSTEM INITIALIZATION ─────────────────────
+// ── INSTANCES ────────────────────────────────────────
 const hA =new FlipDisplay('h-fda');
 const hB =new FlipDisplay('h-fdb');
 const fdA=new FlipDisplay('fda');
 const fdB=new FlipDisplay('fdb');
 
-// Secure Home Sizes to completely isolate layout clipping inside dense spaces
-hA.size(42,58,50); hB.size(42,58,50);
-fdA.size(56,80,70); fdB.size(56,80,70);
+// Micro-scaled home previews (46px width) to guarantee absolute zero vertical clipping
+hA.size(46,64,56); hB.size(46,64,56);
 
-// ── AMBIENT AUDIO CORES ──────────────────────────────
+// ── AMBIENT ENGINE ───────────────────────────────────
 class AmbientEngine{
   constructor(){
     this.ctx=null; this.out=null;
@@ -540,7 +539,7 @@ function updateSndUI(){
   });
 }
 
-// ── THE CHROMA TRANSLATION LAWS ──────────────────────
+// ── COLOR MATH ───────────────────────────────────────
 const pc=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));
 const lp=(a,b,t)=>a.map((v,i)=>Math.round(v+(b[i]-v)*t));
 const rc=([r,g,b])=>`rgb(${r},${g},${b})`;
@@ -549,7 +548,7 @@ const T0=pc('#c8c8c8'),T1=pc('#f5c842'),T2=pc('#f07832'),T3=pc('#e82e2e');
 const urgBg=p=>rc(p>.4?B0:p>.2?lp(B0,B1,(0.4-p)/0.2):p>.05?lp(B1,B2,(0.2-p)/0.15):lp(B2,B3,Math.min((0.05-p)/0.05,1)));
 const urgTx=p=>rc(p>.4?T0:p>.2?lp(T0,T1,(0.4-p)/0.2):p>.05?lp(T1,T2,(0.2-p)/0.15):lp(T2,T3,Math.min((0.05-p)/0.05,1)));
 
-// ── HAPTICS ARCHITECTURE ─────────────────────────────
+// ── HAPTICS ──────────────────────────────────────────
 const vibe=p=>{try{navigator.vibrate?.(p)}catch(e){}};
 const H={
   tap:  ()=>vibe([38,18,76]),
@@ -560,12 +559,12 @@ const H={
   tick: ()=>vibe(14),
 };
 
-// ── WAKE LOCK DRIVERS ────────────────────────────────
+// ── WAKE LOCK ────────────────────────────────────────
 let wl=null;
 async function grabWake(){ if(wl)return; try{if('wakeLock'in navigator)wl=await navigator.wakeLock.request('screen')}catch(e){} }
 function dropWake(){try{wl?.release()}catch(e){}wl=null}
 
-// ── INTEL COMMUNICATIONS (NOTIFICATIONS) ─────────────
+// ── NOTIFICATIONS ────────────────────────────────────
 let notifGranted=false;
 async function askNotif(){
   if(!('Notification'in window))return;
@@ -577,7 +576,7 @@ function notify(title,body){
   try{new Notification(title,{body,icon:'icon.svg',tag:'tempo',renotify:true,silent:true})}catch(e){}
 }
 
-// ── CORE STATE REPOSITORIES ──────────────────────────
+// ── APP STATE ────────────────────────────────────────
 let pidx=1, S='home';
 let aTotal,bTotal,aMs,bMs,aOver=0,delMs=DELAY;
 let sess=0,incPend=false,warnFd=false,notifFd=false;
@@ -589,7 +588,7 @@ const pa=$('pa'), pb=$('pb'), lblA=$('lbl-a'), lblB=$('lbl-b');
 const sessCtr=$('sess-ctr'), ha=$('ha'), hb=$('hb'), ovd=$('ovd'), incBadge=$('inc-b'), hPname=$('h-pname');
 const fdaRow=$('fda');
 
-// ── POPULATE THE CHRONO SPECTRUM ─────────────────────
+// ── HOME PILLS ───────────────────────────────────────
 PRESETS.forEach((p,i)=>{
   const el=document.createElement('div');
   el.className='pill'+(i===1?' on':'');
@@ -617,7 +616,7 @@ $('sbtn').addEventListener('click',()=>{
   footer.classList.add('show');
 });
 
-// ── HARDWARE OPERATIONAL CYCLE RUNNERS ───────────────
+// ── CLOCK INIT ───────────────────────────────────────
 function initClock(){
   const p=PRESETS[pidx];
   aTotal=p.f*60000; bTotal=p.r*60000;
@@ -629,6 +628,7 @@ function initClock(){
   render();
 }
 
+// ── TAPS ─────────────────────────────────────────────
 function tapA(){
   if(S==='idle'){
     S='a_del'; delMs=DELAY; warnFd=false; startTick(); H.tap();
@@ -664,6 +664,7 @@ function gotoFocus(){
   S='a_del'; delMs=DELAY; startTick();
 }
 
+// ── TICKER ───────────────────────────────────────────
 function startTick(){
   stopTick(); lastT=performance.now();
   ticker=setInterval(()=>{
@@ -683,78 +684,78 @@ function tick(dt){
     if(!warnFd&&aMs<=WARN_MS&&aMs>0){warnFd=true;H.warn()}
     if(aMs<=0){
       aMs=0; aOver=0; incPend=true; sess++; S='a_ov'; H.done();
-      notify('Focus complete','Your rest sequence is prepared.');
+      notify('Focus complete','Your rest is ready.');
     } else fdA.update(aMs,true);
   } else if(S==='a_ov'){
     aOver+=dt;
   } else if(S==='b_run'){
     bMs-=dt;
-    if(!notifFd&&bTotal>NOTIF_5MIN&&bMs<=NOTIF_5MIN&&bMs>0){ notifFd=true; notify('Break ending soon','5 minutes remaining.'); }
+    if(!notifFd&&bTotal>NOTIF_5MIN&&bMs<=NOTIF_5MIN&&bMs>0){ notifFd=true; notify('Break ending soon','5 minutes left in your rest.'); }
     if(!warnFd&&bMs<=WARN_MS&&bMs>0){warnFd=true;H.warn()}
     if(bMs<=0){
       bMs=0; S='b_done'; fdB.update(0,false); stopTick(); H.bDone();
-      notify('Break over','Ready to re-engage sequence.');
+      notify('Break over','Time to focus again.');
     } else fdB.update(bMs,true);
   }
   render();
 }
 
-// ── THE LUXURY TWIN-PANEL RENDER GRAPHICS ────────────
+// ── RENDER (THE ARTPIECE TWIN-PANEL TRANSLATIONS) ────
 function setBg(el,c){el.style.backgroundColor=c;el.style.setProperty('--bg',c)}
 
 function render(){
   const pct=aMs/aTotal;
 
-  // ── PANEL INTERACTION A: FOCUS HORIZON
+  // ─ PANEL A: FOCUS VIEWPORT
   if(S==='idle'){
     setBg(pa,'#080808'); fdaRow.style.display='flex'; ovd.style.display='none';
-    fdA.color('#3a3a3a'); fdA.card('#121212');
-    ha.style.color='#555'; ha.textContent='TAP CONSOLE TO START';
+    fdA.color('#363636'); fdA.card('#141414');
+    ha.style.color='#606060'; ha.textContent='READY · TAP CONSOLE TO START FOCUS';
     lblA.style.color='#383838';
   } else if(S==='a_del'){
     setBg(pa,'#080808'); fdaRow.style.display='flex'; ovd.style.display='none';
-    fdA.color('#888080'); fdA.card('#161616');
-    ha.style.color='#555'; ha.textContent='CALIBRATING SEQUENCE IN '+Math.max(1,Math.ceil(delMs/1000));
+    fdA.color('#888080'); fdA.card('#181818');
+    ha.style.color='#404040'; ha.textContent='STARTING IN '+Math.max(1,Math.ceil(delMs/1000));
     lblA.style.color='#505050';
   } else if(S==='a_run'){
     setBg(pa,urgBg(pct)); fdaRow.style.display='flex'; ovd.style.display='none';
-    fdA.color(urgTx(pct)); fdA.card('#141414');
+    fdA.color(urgTx(pct)); fdA.card('#181818');
     ha.textContent=''; lblA.style.color='#505050';
   } else if(S==='a_ov'){
-    setBg(pa,'#140303'); fdaRow.style.display='none'; ovd.style.display='block';
+    setBg(pa,'#130000'); fdaRow.style.display='none'; ovd.style.display='block';
     const os=Math.floor(aOver/1000);
     ovd.textContent='+'+String(Math.floor(os/60)).padStart(2,'0')+':'+String(os%60).padStart(2,'0');
-    ha.style.color='#631e1e'; ha.textContent='OVERTIME DETECTED · TAP TO REST';
-    lblA.style.color='#521818';
+    ha.style.color='#461212'; ha.textContent='OVERTIME · TAP TO REST';
+    lblA.style.color='#3e1414';
   } else {
-    // b_run / b_done (Focus drops into a resting dark charcoal frame)
-    setBg(pa,'#050505'); fdaRow.style.display='flex'; ovd.style.display='none';
-    fdA.color('#181818'); fdA.card('#0a0a0a');
-    ha.textContent=''; lblA.style.color='#161616';
+    // b_run / b_done (Focus drops into a deep graphite bronze phantom layout instead of absolute black)
+    setBg(pa,'#0d0a07'); fdaRow.style.display='flex'; ovd.style.display='none';
+    fdA.color('#261f16'); fdA.card('#14110e');
+    ha.textContent=''; lblA.style.color='#2a2219';
   }
 
-  // ── PANEL INTERACTION B: REST HORIZON
+  // ─ PANEL B: REST VIEWPORT
   if(['idle','a_del','a_run'].includes(S)){
-    // Rest Panel watches in a deep, highly structured low-contrast shadow line
-    setBg(pb,'#06070a'); fdB.color('#161a22'); fdB.card('#0b0d12');
-    hb.textContent=''; lblB.style.color='#141820';
+    // Rest watches simultaneously in a beautifully structured obsidian shadow face
+    setBg(pb,'#080b10'); fdB.color('#1e2530'); fdB.card('#0f131a');
+    hb.textContent=''; lblB.style.color='#1f2633';
   } else if(S==='a_ov'){
-    setBg(pb,'#06070a'); fdB.color('#2b3342'); fdB.card('#0b0d12');
-    hb.style.color='#1f405c'; hb.textContent=incPend?'+ 2:00 ACCRUED':'';
-    lblB.style.color='#222c3a';
+    setBg(pb,'#080b10'); fdB.color('#2b3545'); fdB.card('#0f131a');
+    hb.style.color='#183848'; hb.textContent=incPend?'+ 2:00 EARNED':'';
+    lblB.style.color='#333f52';
   } else if(S==='b_run'){
-    setBg(pb,'#040b12'); fdB.color('#3888ae'); fdB.card('#0a1924');
-    hb.textContent=''; lblB.style.color='#1e5470';
+    setBg(pb,'#040a10'); fdB.color('#3888ae'); fdB.card('#0a1820');
+    hb.textContent=''; lblB.style.color='#1e5068';
   } else if(S==='b_done'){
-    setBg(pb,'#03070d'); fdB.color('#122233'); fdB.card('#050a0f');
-    hb.style.color='#162c42'; hb.textContent=(sess>0&&sess%4===0)?'CONSIDER LONG BREAK':'TAP FOCUS CONSOLE TO RE-ENTER';
-    lblB.style.color='#121c26';
+    setBg(pb,'#040a10'); fdB.color('#102030'); fdB.card('#060e18');
+    hb.style.color='#1e364d'; hb.textContent=(sess>0&&sess%4===0)?'CONSIDER A LONG BREAK':'BREAK COMPLETE · TAP FOCUS TO RE-ENTER';
+    lblB.style.color='#1e364d';
   }
 
-  // Segment metrics tracker
+  // Session layout metrics
   const s4=(sess%4===0&&sess>0)?4:sess%4;
   sessCtr.textContent=`${s4} / 4`;
-  sessCtr.style.color=(sess>0&&sess%4===0)?'#3888ae':'#262626';
+  sessCtr.style.color=(sess>0&&sess%4===0)?'#2a6888':'#2a2a2a';
 }
 
 function showInc(){
