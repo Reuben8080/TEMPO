@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#050403">
+<meta name="theme-color" content="#0a0906">
 <link rel="manifest" href="manifest.json">
 <title>TEMPO</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,93 +13,54 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
-:root {
-  --mono: 'Space Mono', monospace;
-  --serif: 'DM Serif Display', serif;
-  --sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  
-  /* Luxury Material Palette */
-  --bg-core: #050403;
-  --ambient-glow: radial-gradient(circle at 50% 40%, rgba(34, 28, 22, 0.15) 0%, rgba(5, 4, 3, 0) 70%);
-  --text-bright: #e8e5e0;
-  --text-soft: #8a847c;
-  --text-dark: #383430;
-  --gold: #c2a67e;
-  
-  /* Engine Flip Tokens */
-  --fw:62px;--fh:88px;--ffs:76px;
-  --ftop:6px;--fbot:-38px;
-  --frad:4px;--fc:#0f0e0d;--fd:#e8e5e0;
+:root{
+  --bg:#060606;
+  --mono:'Space Mono',monospace;
+  --serif:'DM Serif Display',serif;
+  --fw:56px;--fh:80px;--ffs:70px;
+  --ftop:5px;--fbot:-35px;
+  --frad:6px;--fc:#141414;--fd:#d0d0d0;
 }
 
 html,body{
   width:100%;height:100%;overflow:hidden;
-  background-color:var(--bg-core);
-  font-family:var(--sans);
-  color:var(--text-bright);
+  background:#0a0906;
+  font-family:var(--mono);
   -webkit-tap-highlight-color:transparent;
   user-select:none;touch-action:none;
 }
 
 /* ═══════════════════════════════════════════
-   THE ATMOSPHERIC CANVAS
+   FLIP ENGINE COMPONENTS
 ═══════════════════════════════════════════ */
-.canvas {
-  position:fixed;inset:0;
-  background-color:var(--bg-core);
-  background-image:var(--ambient-glow);
-  transition:background 1.6s cubic-bezier(0.25, 1, 0.5, 1);
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
-  padding:32px;
-  padding-bottom:max(32px, env(safe-area-inset-bottom));
-  padding-top:max(32px, env(safe-area-inset-top));
-}
-
-/* Sound State Map Glows */
-.canvas[data-sound="rain"] { --ambient-glow: radial-gradient(circle at 50% 30%, rgba(24, 36, 43, 0.35) 0%, rgba(5, 6, 8, 0) 75%); }
-.canvas[data-sound="storm"] { --ambient-glow: radial-gradient(circle at 50% 30%, rgba(20, 22, 33, 0.4) 0%, rgba(4, 5, 7, 0) 70%); }
-.canvas[data-sound="cafe"] { --ambient-glow: radial-gradient(circle at 50% 30%, rgba(46, 34, 23, 0.35) 0%, rgba(6, 5, 4, 0) 75%); }
-.canvas[data-sound="library"] { --ambient-glow: radial-gradient(circle at 50% 30%, rgba(28, 33, 26, 0.25) 0%, rgba(4, 5, 4, 0) 75%); }
-
-/* Active Timer State Overrides */
-.canvas[data-state="a_run"] { --ambient-glow: radial-gradient(circle at 50% 40%, rgba(61, 35, 18, 0.25) 0%, rgba(5, 4, 3, 0) 70%); }
-.canvas[data-state="a_ov"] { --ambient-glow: radial-gradient(circle at 50% 50%, rgba(82, 16, 16, 0.35) 0%, rgba(8, 3, 3, 0) 70%); }
-.canvas[data-state="b_run"] { --ambient-glow: radial-gradient(circle at 50% 60%, rgba(16, 48, 69, 0.35) 0%, rgba(3, 5, 8, 0) 70%); }
-
-/* ═══════════════════════════════════════════
-   FLIP ENGINE COMPONENTS (Sleekened/Integrated)
-═══════════════════════════════════════════ */
-.flip-row{display:flex;align-items:center;gap:4px}
+.flip-row{display:flex;align-items:center;gap:6px;flex-shrink:0}
 .flip-sep{
-  font-family:var(--mono);font-weight:400;
-  font-size:calc(var(--ffs) * 0.9);line-height:1;
-  color:var(--text-dark);transition:color .8s;
-  padding-bottom:10px;
+  font-family:var(--mono);font-weight:700;
+  font-size:var(--ffs);line-height:1;
+  color:var(--fd);transition:color .8s ease;
+  padding-bottom:4px;
 }
 .fu{
   position:relative;
   width:var(--fw);height:var(--fh);
-  perspective:300px;
+  perspective:280px;
 }
 .fu::after{
   content:'';position:absolute;
   top:calc(50% - .5px);left:0;right:0;
-  height:1px;background:rgba(0,0,0,0.5);
+  height:1px;background:var(--bg);
   z-index:6;pointer-events:none;
 }
 .fh{
   position:absolute;width:100%;height:50%;
   overflow:hidden;background:var(--fc);
-  box-shadow:inset 0 1px 0px rgba(255,255,255,0.02);
 }
 .fh.t{top:0;border-radius:var(--frad) var(--frad) 0 0;z-index:1}
 .fh.b{bottom:0;border-radius:0 0 var(--frad) var(--frad);z-index:1}
 .fh span{
   position:absolute;left:0;right:0;text-align:center;
   font-family:var(--mono);font-size:var(--ffs);
-  font-weight:400;line-height:1;
+  font-weight:700;line-height:1;
   color:var(--fd);transition:color .8s ease;
 }
 .fh.t span{top:var(--ftop)}
@@ -121,290 +82,251 @@ html,body{
 .flap span{
   position:absolute;left:0;right:0;text-align:center;
   font-family:var(--mono);font-size:var(--ffs);
-  font-weight:400;line-height:1;
+  font-weight:700;line-height:1;
   color:var(--fd);transition:color .8s ease;
 }
 .flap.ft span{top:var(--ftop)}
 .flap.fb span{top:var(--fbot)}
-.flap.ft.go{animation:fUp 150ms ease-in forwards}
-.flap.fb.go{animation:fDn 170ms ease-out forwards;animation-delay:110ms}
+.flap.ft.go{animation:fUp 145ms ease-in  forwards}
+.flap.fb.go{animation:fDn 165ms ease-out forwards;animation-delay:105ms}
 @keyframes fUp{from{transform:rotateX(0)}    to{transform:rotateX(-90deg)}}
 @keyframes fDn{from{transform:rotateX(90deg)}to{transform:rotateX(0)}}
 
 /* ═══════════════════════════════════════════
-   THE LUXURY MONOGRAPH HOME
+   THE HARD SPLIT HOME CONSOLE
 ═══════════════════════════════════════════ */
-#home {
-  position:absolute;inset:32px;
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
-  transition:opacity .6s cubic-bezier(0.25, 1, 0.5, 1), transform .6s cubic-bezier(0.25, 1, 0.5, 1);
+#home{
+  position:fixed;inset:0;
+  display:flex;flex-direction:column;
+  transition:opacity .48s ease;
+  background:#0a0906;
+  padding-top:env(safe-area-inset-top);
+  padding-bottom:env(safe-area-inset-bottom);
 }
-#home.gone{opacity:0;transform:translateY(-8px);pointer-events:none}
+#home.gone{opacity:0;pointer-events:none}
 
-.h-top {
-  display:flex;
-  justify-content:space-between;
-  align-items:baseline;
+.h-panel{
+  flex:1;min-height:0;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:clamp(8px, 1.8vh, 16px);
+  cursor:pointer;touch-action:manipulation;
+  position:relative;
+  transition:background .2s;
 }
-.h-brand {
-  font-family:var(--serif);
-  font-size:24px;
-  letter-spacing:0.02em;
-  color:var(--text-bright);
-}
-#h-snd {
-  font-size:11px;
-  font-weight:500;
-  letter-spacing:0.2em;
-  color:var(--text-soft);
-  cursor:pointer;
-  transition:color 0.3s;
-}
-#h-snd.on { color:var(--gold); }
+.h-pa{background:#110e0a;--bg:#110e0a;border-bottom:1px solid #1c1812;}
+.h-pa:active{background:#15110d}
+.h-pb{background:#0a0c11;--bg:#0a0c11;border-top:1px solid #12161f;}
+.h-pb:active{background:#0d1017}
 
-/* Absolute Typographic Centerpiece */
-.h-hero {
-  align-self:center;
-  text-align:center;
-  margin-top:-20px;
-}
-#h-pname {
-  font-family:var(--serif);
-  font-size:54px;
-  font-weight:400;
-  letter-spacing:0.04em;
-  color:var(--text-bright);
-  margin-bottom:32px;
-}
-.h-intervals {
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:40px;
-}
-.h-int-group {
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:16px;
-}
-.h-label {
-  font-size:10px;
-  font-weight:600;
-  letter-spacing:0.25em;
-  color:var(--text-dark);
-}
-.h-divide {
-  font-family:var(--serif);
-  font-style:italic;
-  font-size:20px;
-  color:var(--text-dark);
-  margin-top:24px;
-}
-
-/* Typographic Continuous Index Selectors */
-.h-bottom {
-  display:flex;
-  flex-direction:column;
-  gap:32px;
-}
-.h-spectrum-wrapper {
-  display:flex;
-  flex-direction:column;
-  gap:12px;
-  align-items:center;
-}
-.h-spectrum-title {
-  font-size:9px;
+.h-plbl{
+  font-size:9px;letter-spacing:.38em;text-transform:uppercase;
   font-weight:700;
-  letter-spacing:0.3em;
-  color:var(--text-dark);
 }
-.h-spectrum {
-  display:flex;
-  justify-content:center;
-  gap:24px;
-  width:100%;
+.h-pa .h-plbl{color:#8a7458}
+.h-pb .h-plbl{color:#3e6080}
+
+#h-snd{
+  position:absolute;bottom:14px;right:18px;
+  font-size:8px;letter-spacing:.16em;text-transform:uppercase;
+  color:#423725;cursor:pointer;touch-action:manipulation;
+  transition:color .18s;padding:4px 8px;
+  z-index:10;
 }
-.spec-item {
-  font-size:12px;
-  font-weight:500;
-  letter-spacing:0.15em;
-  color:var(--text-dark);
-  cursor:pointer;
-  transition:color 0.3s, transform 0.3s;
+#h-snd.on{color:#c2904c}
+
+/* Highly Fluid Compression Center Strip */
+.h-strip{
+  flex:0 0 clamp(145px, 24vh, 190px);
+  background:#0d0b08;
+  border-top:1px solid #1c1812;
+  border-bottom:1px solid #12161f;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:clamp(6px, 1.2vh, 10px);
+  padding:8px 24px;
 }
-.spec-item.on {
-  color:var(--text-bright);
-  transform:scale(1.05);
+.h-wordmark{
+  font-family:var(--serif);
+  font-size:clamp(26px, 4.5vh, 32px);line-height:1;
+  color:#c09868;letter-spacing:.06em;
 }
-#sbtn {
-  font-family:var(--sans);
-  background:none;
-  border:none;
-  font-size:13px;
-  font-weight:600;
-  letter-spacing:0.3em;
-  color:var(--gold);
-  cursor:pointer;
-  padding:16px;
-  align-self:center;
-  transition:opacity 0.2s, transform 0.2s;
+.h-rule{
+  width:100px;height:1px;
+  background:linear-gradient(to right,transparent,#423725,transparent);
+  flex-shrink:0;
 }
-#sbtn:active { transform:scale(0.98); opacity:0.8; }
+.h-pills{display:flex;gap:6px;flex-shrink:0}
+.pill{
+  font-size:9px;letter-spacing:.05em;
+  padding:5px 12px;line-height:1;
+  background:#131108;color:#4a3f2c;
+  border:1px solid #242116;border-radius:2px;
+  cursor:pointer;touch-action:manipulation;
+  transition:all .14s;
+}
+.pill.on{background:#2c2210;color:#d4a24e;border-color:#523e1b}
+.h-pname{
+  font-size:8px;letter-spacing:.34em;text-transform:uppercase;
+  color:#7a6a50;min-height:10px;line-height:1;
+}
+#sbtn{
+  font-size:9px;letter-spacing:.3em;text-transform:uppercase;
+  font-weight:700;color:#b08868;background:none;
+  border:1px solid #3d311e;
+  padding:10px 38px;cursor:pointer;
+  touch-action:manipulation;line-height:1;
+  transition:all .14s;flex-shrink:0;
+}
+#sbtn:active{background:#1c1307;border-color:#6e5031;color:#e6b883}
+.h-hint{
+  font-size:7px;letter-spacing:.2em;text-transform:uppercase;
+  color:#3b311f;line-height:1;
+}
+
+@media(min-width:768px){
+  #home{flex-direction:row;padding:0}
+  .h-pa{border-bottom:none;border-right:1px solid #1c1812}
+  .h-pb{border-top:none;border-left:1px solid #12161f}
+  .h-strip{
+    flex:0 0 210px;height:100%;
+    border-top:none;border-bottom:none;
+    border-left:1px solid #1c1812;border-right:1px solid #12161f;
+    gap:14px;
+  }
+}
 
 /* ═══════════════════════════════════════════
-   THE ACTIVE HORIZON SCREEN
+   THE ACTIVE HORIZON SCREEN (50/50 TENSION)
 ═══════════════════════════════════════════ */
-#clk {
-  position:absolute;inset:32px;
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
+#clk{
+  display:flex;flex-direction:column;
+  width:100vw;height:100dvh;
   opacity:0;pointer-events:none;
-  transition:opacity .8s ease, transform .8s ease;
-  transform:translateY(12px);
+  transition:opacity .48s ease;
+  background:#060606;
 }
-#clk.show { opacity:1; pointer-events:all; transform:translateY(0); }
+#clk.show{opacity:1;pointer-events:all}
+@media(min-width:768px){#clk{flex-direction:row}}
 
-.c-top {
-  display:flex;
-  justify-content:space-between;
-  align-items:baseline;
+.panel{
+  flex:1;min-height:0;position:relative;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  cursor:pointer;touch-action:manipulation;
+  transition:background-color .95s ease;
+  gap:16px;
 }
-.c-state-lbl {
-  font-size:11px;
-  font-weight:600;
-  letter-spacing:0.25em;
-  color:var(--text-soft);
-  transition:color 0.5s;
-}
-#sess-ctr {
-  font-family:var(--mono);
-  font-size:11px;
-  letter-spacing:0.1em;
-  color:var(--text-dark);
-}
-
-.c-main {
-  flex:1;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:20px;
-}
-.ov-ctr {
-  font-family:var(--mono);
-  font-weight:400;
-  font-size:clamp(54px, 12vw, 84px);
-  letter-spacing:-0.03em;
-  color:#ff4545;
-  display:none;
-  line-height:1;
-}
-.c-hint {
-  font-size:11px;
-  letter-spacing:0.2em;
-  color:var(--text-dark);
-  min-height:14px;
-  text-transform:uppercase;
-}
-.inc-badge {
-  font-size:11px;
-  font-weight:600;
-  letter-spacing:0.15em;
-  color:#3888ae;
-  opacity:0;
-  transition:opacity 0.6s;
-}
-.inc-badge.show { opacity:1; }
-
-.c-bottom {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-#clk-snd {
-  font-size:11px;
-  font-weight:500;
-  letter-spacing:0.2em;
-  color:var(--text-dark);
-  cursor:pointer;
-}
-#clk-snd.on { color:var(--gold); }
-#exit-btn {
-  background:none; border:none;
-  font-size:11px; font-weight:500; letter-spacing:0.2em;
-  color:var(--text-soft); cursor:pointer;
-}
-
-/* Adaptive Space Scaling */
+#pa{border-bottom:1px solid #141414}
 @media(min-width:768px){
-  .canvas { padding:48px; }
-  #home, #clk { inset:48px; }
-  #home { max-width:520px; margin:0 auto; }
-  #clk { max-width:600px; margin:0 auto; }
-  #h-pname { font-size:64px; }
+  #pa{border-bottom:none;border-right:1px solid #141414}
+}
+
+.p-lbl{
+  position:absolute;top:max(18px, env(safe-area-inset-top));left:24px;
+  font-size:9px;letter-spacing:.32em;text-transform:uppercase;
+  font-weight:700;transition:color .8s ease;pointer-events:none;
+}
+#sess-ctr{
+  position:absolute;top:max(18px, env(safe-area-inset-top));right:24px;
+  font-size:9px;letter-spacing:.16em;
+  color:#242424;transition:color .5s;pointer-events:none;
+}
+.p-hint{
+  font-size:9px;letter-spacing:.22em;text-transform:uppercase;
+  min-height:13px;transition:color .45s;pointer-events:none;
+  text-align:center;
+}
+.ov-ctr{
+  font-weight:700;
+  font-size:clamp(48px,12vw,76px);
+  letter-spacing:-.025em;color:#c42020;
+  display:none;line-height:1;
+}
+@media(min-width:768px){.ov-ctr{font-size:clamp(40px,5.2vw,70px)}}
+
+.inc-badge{
+  position:absolute;bottom:22px;right:24px;
+  font-size:10px;letter-spacing:.12em;color:#2a6888;
+  opacity:0;transition:opacity .7s;pointer-events:none;
+}
+.inc-badge.show{opacity:1}
+
+/* Seamless Integrated Footer Overlay */
+#clk-footer{
+  position:fixed;bottom:0;left:0;right:0;
+  display:none;justify-content:space-between;align-items:center;
+  padding:0 24px;
+  padding-bottom:max(8px,env(safe-area-inset-bottom));
+  pointer-events:none;z-index:20;
+}
+#clk-footer.show{display:flex}
+#clk-snd{
+  font-size:8px;letter-spacing:.16em;text-transform:uppercase;
+  color:#222;cursor:pointer;
+  touch-action:manipulation;pointer-events:all;
+  transition:color .2s;padding:12px 16px;
+}
+#clk-snd.on{color:#54462e}
+#exit-btn{
+  font-size:8px;letter-spacing:.24em;text-transform:uppercase;
+  color:#222;background:none;border:none;
+  padding:12px 16px;cursor:pointer;
+  touch-action:manipulation;pointer-events:all;
+  transition:color .2s;
+}
+#exit-btn:hover, #exit-btn:active{color:#666}
+
+@media(prefers-reduced-motion:reduce){
+  *{transition:none!important;animation:none!important}
 }
 </style>
 </head>
 <body>
 
-<div class="canvas" id="canvas" data-sound="off" data-state="idle">
+<div id="home">
 
-  <div id="home">
-    <header class="h-top">
-      <div class="h-brand">TEMPO</div>
-      <div id="h-snd" onclick="cycleSnd(event)">· OFF</div>
-    </header>
-
-    <main class="h-hero">
-      <h2 id="h-pname" onclick="homeNext()">CLASSIC</h2>
-      <div class="h-intervals" onclick="homeNext()">
-        <div class="h-int-group">
-          <span class="h-label">FOCUS</span>
-          <div class="flip-row" id="h-fda"></div>
-        </div>
-        <div class="h-divide">/</div>
-        <div class="h-int-group">
-          <span class="h-label">REST</span>
-          <div class="flip-row" id="h-fdb"></div>
-        </div>
-      </div>
-    </main>
-
-    <footer class="h-bottom">
-      <div class="h-spectrum-wrapper">
-        <span class="h-spectrum-title">INTERVAL INDEX</span>
-        <div class="h-spectrum" id="h-pills"></div>
-      </div>
-      <button id="sbtn">ENTER INTERVAL</button>
-    </footer>
+  <div class="h-panel h-pa" onclick="homeNext()">
+    <div class="h-plbl">FOCUS</div>
+    <div class="flip-row" id="h-fda"></div>
+    <div id="h-snd" onclick="cycleSnd(event)">· OFF</div>
   </div>
 
-  <div id="clk">
-    <header class="c-top">
-      <span class="c-state-lbl" id="c-state-indicator">FOCUS</span>
-      <span id="sess-ctr">0 / 4</span>
-    </header>
-
-    <main class="c-main" id="clk-trigger">
-      <div class="flip-row" id="fda"></div>
-      <div class="flip-row" id="fdb" style="display:none;"></div>
-      <div class="ov-ctr" id="ovd"></div>
-      <div class="c-hint" id="ha"></div>
-      <div class="inc-badge" id="inc-b">+2:00 METRIC</div>
-    </main>
-
-    <footer class="c-bottom">
-      <div id="clk-snd" onclick="cycleSnd(event)">· OFF</div>
-      <button id="exit-btn" onclick="doExit()">DISMISS ×</button>
-    </footer>
+  <div class="h-strip">
+    <div class="h-wordmark">TEMPO</div>
+    <div class="h-rule"></div>
+    <div class="h-pills" id="h-pills"></div>
+    <div class="h-pname" id="h-pname">CLASSIC</div>
+    <button id="sbtn">START</button>
+    <div class="h-hint">tap panels to toggle index</div>
   </div>
 
+  <div class="h-panel h-pb" onclick="homeNext()">
+    <div class="flip-row" id="h-fdb"></div>
+    <div class="h-plbl">REST</div>
+  </div>
+
+</div>
+
+<div id="clk">
+  <div class="panel" id="pa" onclick="tapA()">
+    <span class="p-lbl" id="lbl-a">FOCUS</span>
+    <span id="sess-ctr">0 / 4</span>
+    <div class="flip-row" id="fda"></div>
+    <div class="ov-ctr"   id="ovd"></div>
+    <div class="p-hint"   id="ha"></div>
+    <div class="inc-badge" id="inc-b">+2:00</div>
+  </div>
+  <div class="panel" id="pb" onclick="tapB()">
+    <span class="p-lbl" id="lbl-b">REST</span>
+    <div class="flip-row" id="fdb"></div>
+    <div class="p-hint"   id="hb"></div>
+  </div>
+</div>
+
+<div id="clk-footer">
+  <div id="clk-snd" onclick="cycleSnd(event)">· OFF</div>
+  <button id="exit-btn" onclick="doExit()">EXIT ×</button>
 </div>
 
 <script>
@@ -443,7 +365,9 @@ class FlipDigit{
       [this.sT,this.sB,this.fsT,this.fsB].forEach(e=>e.textContent=ns);
       return;
     }
-    this.sT.textContent=ns; this.fsT.textContent=prev; this.fsB.textContent=ns;
+    this.sT.textContent=ns;
+    this.fsT.textContent=prev;
+    this.fsB.textContent=ns;
     this.fT.classList.remove('go'); this.fB.classList.remove('go');
     void this.fT.offsetWidth;
     this.fT.classList.add('go'); this.fB.classList.add('go');
@@ -464,6 +388,7 @@ class FlipDigit{
   }
 }
 
+// ── FLIP DISPLAY ENGINE ──────────────────────────────
 class FlipDisplay{
   constructor(id){
     const w=document.getElementById(id);
@@ -498,15 +423,17 @@ class FlipDisplay{
   reset(){this.d.forEach(d=>{d.cur=null});this._ls=-1}
 }
 
-// ── INITIALIZE RENDERING DECORATIONS ─────────────────
+// ── RENDER SYSTEM INITIALIZATION ─────────────────────
 const hA =new FlipDisplay('h-fda');
 const hB =new FlipDisplay('h-fdb');
 const fdA=new FlipDisplay('fda');
 const fdB=new FlipDisplay('fdb');
-hA.size(38,54,46); hB.size(38,54,46);
-fdA.size(68,96,82); fdB.size(68,96,82);
 
-// ── AUDIO LANDSCAPE ENGINE ───────────────────────────
+// Secure Home Sizes to completely isolate layout clipping inside dense spaces
+hA.size(42,58,50); hB.size(42,58,50);
+fdA.size(56,80,70); fdB.size(56,80,70);
+
+// ── AMBIENT AUDIO CORES ──────────────────────────────
 class AmbientEngine{
   constructor(){
     this.ctx=null; this.out=null;
@@ -526,14 +453,16 @@ class AmbientEngine{
     const buf=this.ctx.createBuffer(1,len,sr);
     const d=buf.getChannelData(0);
     if(type==='brown'){
-      let l=0; for(let i=0;i<len;i++){ const w=Math.random()*2-1; d[i]=Math.max(-1,Math.min(1,(l+0.02*w)/1.02)); l=d[i]; }
+      let l=0;
+      for(let i=0;i<len;i++){ const w=Math.random()*2-1; d[i]=Math.max(-1,Math.min(1,(l+0.02*w)/1.02)); l=d[i]; }
     } else if(type==='white'){
       for(let i=0;i<len;i++) d[i]=Math.random()*2-1;
     } else {
       let b0=0,b1=0,b2=0,b3=0,b4=0,b5=0,b6=0;
       for(let i=0;i<len;i++){
         const w=Math.random()*2-1;
-        b0=0.99886*b0+w*0.0555179; b1=0.99332*b1+w*0.0750759; b2=0.96900*b2+w*0.1538520; b3=0.86650*b3+w*0.3104856;
+        b0=0.99886*b0+w*0.0555179; b1=0.99332*b1+w*0.0750759;
+        b2=0.96900*b2+w*0.1538520; b3=0.86650*b3+w*0.3104856;
         b4=0.55000*b4+w*0.5329522; b5=-0.7616*b5-w*0.0168980;
         d[i]=Math.max(-1,Math.min(1,(b0+b1+b2+b3+b4+b5+b6+w*0.5362)*0.11)); b6=w*0.115926;
       }
@@ -546,7 +475,7 @@ class AmbientEngine{
   _wire(src,...chain){
     let p=src; chain.forEach(n=>{p.connect(n);p=n}); p.connect(this.out); src.start(); this.nodes.push(src,...chain);
   }
-  _fade(to,t=1.4){
+  _fade(to,t=1.2){
     const g=this.out.gain, now=this.ctx.currentTime;
     g.cancelScheduledValues(now); g.setValueAtTime(g.value,now); g.linearRampToValueAtTime(to,now+t);
   }
@@ -556,127 +485,139 @@ class AmbientEngine{
   }
   select(mode){
     this._init(); this.mode=mode;
-    clearTimeout(this._swTO); this._fade(0,.3);
-    this._swTO=setTimeout(()=>{this._kill();this._build(mode)},350);
-    document.getElementById('canvas').setAttribute('data-sound', mode);
+    clearTimeout(this._swTO); this._fade(0,.4);
+    this._swTO=setTimeout(()=>{this._kill();this._build(mode)},450);
     updateSndUI();
   }
   _build(mode){
     if(mode==='off')return;
     if(mode==='rain'){
-      this._wire(this._src(this._noise('brown')),this._gain(0.55));
-      this._wire(this._src(this._noise('white')),this._filt('highpass',3000),this._gain(0.08));
-      this._fade(0.6);
+      this._wire(this._src(this._noise('brown')),this._gain(0.5));
+      this._wire(this._src(this._noise('white')),this._filt('highpass',2800),this._gain(0.09));
+      this._fade(0.55);
     } else if(mode==='storm'){
-      this._wire(this._src(this._noise('brown')),this._gain(0.75));
-      this._wire(this._src(this._noise('white')),this._filt('highpass',2200),this._gain(0.12));
-      this._fade(0.65); this._thunder();
+      this._wire(this._src(this._noise('brown')),this._gain(0.7));
+      this._wire(this._src(this._noise('white')),this._filt('highpass',2400),this._gain(0.14));
+      this._wire(this._src(this._noise('brown')),this._filt('lowpass',90),this._gain(0.4));
+      this._fade(0.6); this._thunder();
     } else if(mode==='cafe'){
-      this._wire(this._src(this._noise('pink')),this._filt('bandpass',650,0.4),this._gain(0.9));
-      this._fade(0.35);
+      this._wire(this._src(this._noise('pink')),this._filt('bandpass',700,0.35),this._gain(1.0));
+      this._wire(this._src(this._noise('pink')),this._filt('highshelf',3500),this._gain(0.18));
+      this._fade(0.4);
     } else if(mode==='library'){
-      this._wire(this._src(this._noise('pink')),this._filt('lowpass',320),this._gain(0.6));
-      this._fade(0.2);
+      this._wire(this._src(this._noise('pink')),this._filt('lowpass',380),this._gain(0.7));
+      this._fade(0.16);
     }
   }
   _thunder(){
     if(this.mode!=='storm')return;
     this.tTO=setTimeout(()=>{
       if(this.mode!=='storm')return;
-      const src=this._src(this._noise('white')), env=this._gain(0), lp=this._filt('lowpass',220);
+      const src=this._src(this._noise('white')), env=this._gain(0), lp=this._filt('lowpass',280);
       src.connect(lp); lp.connect(env); env.connect(this.out); this.nodes.push(src,lp,env); src.start();
-      const t=this.ctx.currentTime; env.gain.setValueAtTime(0,t); env.gain.linearRampToValueAtTime(0.5,t+0.1); env.gain.exponentialRampToValueAtTime(0.001,t+5);
-      setTimeout(()=>{ try{src.stop()}catch(e){} this.nodes=this.nodes.filter(n=>n!==src&&n!==lp&&n!==env); },5200);
+      const t=this.ctx.currentTime; env.gain.setValueAtTime(0,t); env.gain.linearRampToValueAtTime(0.65,t+0.06); env.gain.exponentialRampToValueAtTime(0.001,t+4.5);
+      setTimeout(()=>{ try{src.stop()}catch(e){} this.nodes=this.nodes.filter(n=>n!==src&&n!==lp&&n!==env); },5500);
       this._thunder();
-    },12000+Math.random()*22000);
+    },9000+Math.random()*26000);
   }
 }
 const ambient=new AmbientEngine();
 const SND_MODES=['off','rain','storm','cafe','library'];
-const SND_LBLS ={'off':'· OFF','rain':'· RAIN','storm':'· STORM','cafe':'· CAFE','library':'· LIBRARY'};
+const SND_LBLS ={'off':'· OFF','rain':'· RAIN','storm':'· STORM','cafe':'· CAFE','library':'· LIB'};
 let sndIdx=0;
 
 function cycleSnd(e){
   if(e)e.stopPropagation();
   sndIdx=(sndIdx+1)%SND_MODES.length;
   ambient.select(SND_MODES[sndIdx]);
-  vibe(25);
+  vibe(30);
 }
 function updateSndUI(){
   const lbl=SND_LBLS[SND_MODES[sndIdx]], on=sndIdx>0;
   ['h-snd','clk-snd'].forEach(id=>{
     const el=document.getElementById(id);
-    if(el){ el.textContent=lbl; el.classList.toggle('on',on); }
+    if(el) { el.textContent=lbl; el.classList.toggle('on',on); }
   });
 }
+
+// ── THE CHROMA TRANSLATION LAWS ──────────────────────
+const pc=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));
+const lp=(a,b,t)=>a.map((v,i)=>Math.round(v+(b[i]-v)*t));
+const rc=([r,g,b])=>`rgb(${r},${g},${b})`;
+const B0=pc('#060606'),B1=pc('#130a00'),B2=pc('#250500'),B3=pc('#3d0000');
+const T0=pc('#c8c8c8'),T1=pc('#f5c842'),T2=pc('#f07832'),T3=pc('#e82e2e');
+const urgBg=p=>rc(p>.4?B0:p>.2?lp(B0,B1,(0.4-p)/0.2):p>.05?lp(B1,B2,(0.2-p)/0.15):lp(B2,B3,Math.min((0.05-p)/0.05,1)));
+const urgTx=p=>rc(p>.4?T0:p>.2?lp(T0,T1,(0.4-p)/0.2):p>.05?lp(T1,T2,(0.2-p)/0.15):lp(T2,T3,Math.min((0.05-p)/0.05,1)));
 
 // ── HAPTICS ARCHITECTURE ─────────────────────────────
 const vibe=p=>{try{navigator.vibrate?.(p)}catch(e){}};
 const H={
-  tap:  ()=>vibe([30,20,50]),
-  run:  ()=>vibe([40,15,60]),
-  warn: ()=>vibe([30,30,30]),
-  done: ()=>vibe([80,40,120]),
-  bDone:()=>vibe([40,20,40,20,40]),
-  tick: ()=>vibe(10),
+  tap:  ()=>vibe([38,18,76]),
+  run:  ()=>vibe([58,22,96]),
+  warn: ()=>vibe([38,22,38,22,38]),
+  done: ()=>vibe([96,42,190]),
+  bDone:()=>vibe([58,32,58,32,58]),
+  tick: ()=>vibe(14),
 };
 
-// ── SYSTEM HOOKS ─────────────────────────────────────
+// ── WAKE LOCK DRIVERS ────────────────────────────────
 let wl=null;
 async function grabWake(){ if(wl)return; try{if('wakeLock'in navigator)wl=await navigator.wakeLock.request('screen')}catch(e){} }
 function dropWake(){try{wl?.release()}catch(e){}wl=null}
 
+// ── INTEL COMMUNICATIONS (NOTIFICATIONS) ─────────────
 let notifGranted=false;
 async function askNotif(){
   if(!('Notification'in window))return;
   if(Notification.permission==='granted'){notifGranted=true;return}
-  if(Notification.permission!=='denied'){notifGranted=(await Notification.requestPermission())==='granted';}
+  if(Notification.permission!=='denied'){ notifGranted=(await Notification.requestPermission())==='granted'; }
 }
 function notify(title,body){
   if(!notifGranted||document.visibilityState==='visible')return;
-  try{new Notification(title,{body,tag:'tempo',renotify:true,silent:true})}catch(e){}
+  try{new Notification(title,{body,icon:'icon.svg',tag:'tempo',renotify:true,silent:true})}catch(e){}
 }
 
-// ── SYSTEM ENGINE STATE ──────────────────────────────
+// ── CORE STATE REPOSITORIES ──────────────────────────
 let pidx=1, S='home';
 let aTotal,bTotal,aMs,bMs,aOver=0,delMs=DELAY;
 let sess=0,incPend=false,warnFd=false,notifFd=false;
 let ticker=null,lastT=null,incTO=null;
 
 const $=id=>document.getElementById(id);
-const canvasEl=$('canvas'), homeEl=$('home'), clkEl=$('clk');
-const stateIndicator=$('c-state-indicator'), sessCtr=$('sess-ctr'), ha=$('ha');
-const ovd=$('ovd'), incBadge=$('inc-b'), hPname=$('h-pname');
-const fdaView=$('fda'), fdbView=$('fdb');
+const homeEl=$('home'), clkEl=$('clk'), footer=$('clk-footer');
+const pa=$('pa'), pb=$('pb'), lblA=$('lbl-a'), lblB=$('lbl-b');
+const sessCtr=$('sess-ctr'), ha=$('ha'), hb=$('hb'), ovd=$('ovd'), incBadge=$('inc-b'), hPname=$('h-pname');
+const fdaRow=$('fda');
 
-// ── BUILD TYPOGRAPHIC SPECTRUM INDEX ─────────────────
+// ── POPULATE THE CHRONO SPECTRUM ─────────────────────
 PRESETS.forEach((p,i)=>{
   const el=document.createElement('div');
-  el.className='spec-item'+(i===1?' on':'');
-  el.textContent=p.name;
-  el.addEventListener('click',e=>{e.stopPropagation();pickPreset(i,true);vibe(30)});
+  el.className='pill'+(i===1?' on':'');
+  el.textContent=String(p.f);
+  el.addEventListener('click',e=>{e.stopPropagation();pickPreset(i,true);vibe(40)});
   $('h-pills').appendChild(el);
 });
 
 function pickPreset(i,anim){
   pidx=i;
-  document.querySelectorAll('.spec-item').forEach((p,j)=>p.classList.toggle('on',j===i));
+  document.querySelectorAll('.pill').forEach((p,j)=>p.classList.toggle('on',j===i));
   hPname.textContent=PRESETS[i].name;
-  hA.color('#e8e5e0'); hA.card('#0f0e0d'); hA.sep.style.color='#383430';
-  hB.color('#8a847c'); hB.card('#0f0e0d'); hB.sep.style.color='#383430';
+  hA.color('#c0a872'); hA.card('#1e1a12'); hA.sep.style.color='#7a6040';
+  hB.color('#5890b4'); hB.card('#121a24'); hB.sep.style.color='#345880';
   hA.update(PRESETS[i].f*60000,anim);
   hB.update(PRESETS[i].r*60000,anim);
 }
-function homeNext(){pickPreset((pidx+1)%PRESETS.length,true);vibe(35)}
+function homeNext(){pickPreset((pidx+1)%PRESETS.length,true);vibe(40)}
 pickPreset(1,false);
 
 $('sbtn').addEventListener('click',()=>{
   askNotif(); initClock();
   homeEl.classList.add('gone');
   clkEl.classList.add('show');
+  footer.classList.add('show');
 });
 
-// ── MAIN INTERACTIVE CORE ROUTINES ───────────────────
+// ── HARDWARE OPERATIONAL CYCLE RUNNERS ───────────────
 function initClock(){
   const p=PRESETS[pidx];
   aTotal=p.f*60000; bTotal=p.r*60000;
@@ -688,15 +629,13 @@ function initClock(){
   render();
 }
 
-$('clk-trigger').addEventListener('click', ()=>{
+function tapA(){
   if(S==='idle'){
     S='a_del'; delMs=DELAY; warnFd=false; startTick(); H.tap();
   } else if(S==='a_run'){
     incPend=false; gotoBreak(); H.tap();
   } else if(S==='a_ov'){
     gotoBreak(); H.tap();
-  } else if(S==='b_run'){
-    gotoFocus(); H.tap();
   } else if(S==='b_done'){
     aMs=aTotal; bMs=bTotal;
     fdA.reset(); fdB.reset();
@@ -704,8 +643,12 @@ $('clk-trigger').addEventListener('click', ()=>{
     S='a_del'; delMs=DELAY; warnFd=false; startTick(); H.tap();
   }
   render();
-});
-
+}
+function tapB(){
+  if(S==='a_ov'){gotoBreak();H.tap()}
+  else if(S==='b_run'){gotoFocus();H.tap()}
+  render();
+}
 function gotoBreak(){
   stopTick();
   bMs=incPend?bTotal+INC:bTotal;
@@ -740,7 +683,7 @@ function tick(dt){
     if(!warnFd&&aMs<=WARN_MS&&aMs>0){warnFd=true;H.warn()}
     if(aMs<=0){
       aMs=0; aOver=0; incPend=true; sess++; S='a_ov'; H.done();
-      notify('Focus complete','Interval processing complete.');
+      notify('Focus complete','Your rest sequence is prepared.');
     } else fdA.update(aMs,true);
   } else if(S==='a_ov'){
     aOver+=dt;
@@ -750,57 +693,68 @@ function tick(dt){
     if(!warnFd&&bMs<=WARN_MS&&bMs>0){warnFd=true;H.warn()}
     if(bMs<=0){
       bMs=0; S='b_done'; fdB.update(0,false); stopTick(); H.bDone();
-      notify('Break over','Ready to re-enter sequence.');
+      notify('Break over','Ready to re-engage sequence.');
     } else fdB.update(bMs,true);
   }
   render();
 }
 
-// ── PREMIUM CONTEXTUAL RENDER ────────────────────────
+// ── THE LUXURY TWIN-PANEL RENDER GRAPHICS ────────────
+function setBg(el,c){el.style.backgroundColor=c;el.style.setProperty('--bg',c)}
+
 function render(){
-  canvasEl.setAttribute('data-state', S);
+  const pct=aMs/aTotal;
 
+  // ── PANEL INTERACTION A: FOCUS HORIZON
   if(S==='idle'){
-    fdaView.style.display='flex'; fdbView.style.display='none'; ovd.style.display='none';
-    fdA.color('#544e46'); fdA.card('#0f0e0d');
-    stateIndicator.textContent='SEQUENCE READY'; stateIndicator.style.color='var(--text-soft)';
-    ha.textContent='TAP TO INITIATE TRACK';
-
+    setBg(pa,'#080808'); fdaRow.style.display='flex'; ovd.style.display='none';
+    fdA.color('#3a3a3a'); fdA.card('#121212');
+    ha.style.color='#555'; ha.textContent='TAP CONSOLE TO START';
+    lblA.style.color='#383838';
   } else if(S==='a_del'){
-    fdaView.style.display='flex'; fdbView.style.display='none'; ovd.style.display='none';
-    fdA.color('#e8e5e0'); fdA.card('#171513');
-    stateIndicator.textContent='SEQUENCE FOCUS'; stateIndicator.style.color='var(--text-bright)';
-    ha.textContent='CALIBRATING ENGINE IN '+Math.max(1,Math.ceil(delMs/1000));
-
+    setBg(pa,'#080808'); fdaRow.style.display='flex'; ovd.style.display='none';
+    fdA.color('#888080'); fdA.card('#161616');
+    ha.style.color='#555'; ha.textContent='CALIBRATING SEQUENCE IN '+Math.max(1,Math.ceil(delMs/1000));
+    lblA.style.color='#505050';
   } else if(S==='a_run'){
-    fdaView.style.display='flex'; fdbView.style.display='none'; ovd.style.display='none';
-    fdA.color('#ffbe85'); fdA.card('#0f0e0d');
-    stateIndicator.textContent='FOCUSING ENVIRONMENT'; stateIndicator.style.color='var(--gold)';
-    ha.textContent='';
-
+    setBg(pa,urgBg(pct)); fdaRow.style.display='flex'; ovd.style.display='none';
+    fdA.color(urgTx(pct)); fdA.card('#141414');
+    ha.textContent=''; lblA.style.color='#505050';
   } else if(S==='a_ov'){
-    fdaView.style.display='none'; fdbView.style.display='none'; ovd.style.display='block';
+    setBg(pa,'#140303'); fdaRow.style.display='none'; ovd.style.display='block';
     const os=Math.floor(aOver/1000);
     ovd.textContent='+'+String(Math.floor(os/60)).padStart(2,'0')+':'+String(os%60).padStart(2,'0');
-    stateIndicator.textContent='OVERTIME DETECTED'; stateIndicator.style.color='#ff4545';
-    ha.textContent='TAP HARIZON TO TRANSITION';
-
-  } else if(S==='b_run'){
-    fdaView.style.display='none'; fdbView.style.display='flex'; ovd.style.display='none';
-    fdB.color('#82ccff'); fdB.card('#0a1117');
-    stateIndicator.textContent='REST SEQUENCE'; stateIndicator.style.color='#82ccff';
-    ha.textContent='';
-
-  } else if(S==='b_done'){
-    fdaView.style.display='none'; fdbView.style.display='flex'; ovd.style.display='none';
-    fdB.color('#223f54'); fdB.card('#060a0f');
-    stateIndicator.textContent='REST CYCLE EXPIRED'; stateIndicator.style.color='var(--text-soft)';
-    ha.textContent=(sess>0&&sess%4===0)?'CONSIDER EXTENDED BREAK':'TAP TO RE-ENTER FOCUS';
+    ha.style.color='#631e1e'; ha.textContent='OVERTIME DETECTED · TAP TO REST';
+    lblA.style.color='#521818';
+  } else {
+    // b_run / b_done (Focus drops into a resting dark charcoal frame)
+    setBg(pa,'#050505'); fdaRow.style.display='flex'; ovd.style.display='none';
+    fdA.color('#181818'); fdA.card('#0a0a0a');
+    ha.textContent=''; lblA.style.color='#161616';
   }
 
+  // ── PANEL INTERACTION B: REST HORIZON
+  if(['idle','a_del','a_run'].includes(S)){
+    // Rest Panel watches in a deep, highly structured low-contrast shadow line
+    setBg(pb,'#06070a'); fdB.color('#161a22'); fdB.card('#0b0d12');
+    hb.textContent=''; lblB.style.color='#141820';
+  } else if(S==='a_ov'){
+    setBg(pb,'#06070a'); fdB.color('#2b3342'); fdB.card('#0b0d12');
+    hb.style.color='#1f405c'; hb.textContent=incPend?'+ 2:00 ACCRUED':'';
+    lblB.style.color='#222c3a';
+  } else if(S==='b_run'){
+    setBg(pb,'#040b12'); fdB.color('#3888ae'); fdB.card('#0a1924');
+    hb.textContent=''; lblB.style.color='#1e5470';
+  } else if(S==='b_done'){
+    setBg(pb,'#03070d'); fdB.color('#122233'); fdB.card('#050a0f');
+    hb.style.color='#162c42'; hb.textContent=(sess>0&&sess%4===0)?'CONSIDER LONG BREAK':'TAP FOCUS CONSOLE TO RE-ENTER';
+    lblB.style.color='#121c26';
+  }
+
+  // Segment metrics tracker
   const s4=(sess%4===0&&sess>0)?4:sess%4;
   sessCtr.textContent=`${s4} / 4`;
-  sessCtr.style.color=(sess>0&&sess%4===0)?'#82ccff':'var(--text-dark)';
+  sessCtr.style.color=(sess>0&&sess%4===0)?'#3888ae':'#262626';
 }
 
 function showInc(){
@@ -812,12 +766,12 @@ function doExit(){
   stopTick();
   clkEl.classList.remove('show');
   homeEl.classList.remove('gone');
-  canvasEl.setAttribute('data-state', 'idle');
+  footer.classList.remove('show');
   fdA.reset(); fdB.reset();
 }
 
 if('serviceWorker'in navigator){
-  window.addEventListener('load',()=>{ navigator.serviceWorker.register('sw.js').catch(e=>console.warn(e)); });
+  window.addEventListener('load',()=>{ navigator.serviceWorker.register('sw.js').catch(e=>console.warn('SW:',e)); });
 }
 
 document.addEventListener('visibilitychange',()=>{
