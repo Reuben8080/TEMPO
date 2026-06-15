@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0a0906">
+<link rel="manifest" href="manifest.json">
+<title>TEMPO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#060606;
+  --mono:'Space Mono',monospace;
+  --serif:'DM Serif Display',serif;
+  --fw:58px;--fh:82px;--ffs:72px;
+  --ftop:5px;--fbot:-36px;
+  --frad:7px;--fc:#141414;--fd:#d0d0d0;
+}
+
+html,body{
+  width:100%;height:100%;overflow:hidden;
+  background:#0a0906;
+  font-family:var(--mono);
+  -webkit-tap-highlight-color:transparent;
+  user-select:none;touch-action:none;
+}
+
+/* ═══════════════════════════════════════════
+   FLIP UNIT
+═══════════════════════════════════════════ */
+.flip-row{display:flex;align-items:center;gap:7px}
+.flip-sep{
+  font-family:var(--mono);font-weight:700;
+  font-size:var(--ffs);line-height:1;
+  color:var(--fd);transition:color .8s ease;
+  padding-bottom:3px;
+}
+.fu{
+  position:relative;
+  width:var(--fw);height:var(--fh);
+  perspective:280px;
+}
+/* fold-line */
+.fu::after{
+  content:'';position:absolute;
+  top:calc(50% - .5px);left:0;right:0;
+  height:1px;background:var(--bg);
+  z-index:6;pointer-events:none;
+}
+/* static halves */
+.fh{
+  position:absolute;width:100%;height:50%;
+  overflow:hidden;background:var(--fc);
+}
+.fh.t{top:0;border-radius:var(--frad) var(--frad) 0 0;z-index:1}
+.fh.b{bottom:0;border-radius:0 0 var(--frad) var(--frad);z-index:1}
+.fh span{
+  position:absolute;left:0;right:0;text-align:center;
+  font-family:var(--mono);font-size:var(--ffs);
+  font-weight:700;line-height:1;
+  color:var(--fd);transition:color .8s ease;
+}
+.fh.t span{top:var(--ftop)}
+.fh.b span{top:var(--fbot)}
+/* animated flaps */
+.flap{
+  position:absolute;width:100%;height:50%;
+  overflow:hidden;background:var(--fc);
+  transform-style:preserve-3d;backface-visibility:hidden;
+}
+.flap.ft{
+  top:0;border-radius:var(--frad) var(--frad) 0 0;
+  transform-origin:center bottom;z-index:2;
+}
+.flap.fb{
+  bottom:0;border-radius:0 0 var(--frad) var(--frad);
+  transform-origin:center top;z-index:2;
+  transform:rotateX(90deg);
+}
+.flap span{
+  position:absolute;left:0;right:0;text-align:center;
+  font-family:var(--mono);font-size:var(--ffs);
+  font-weight:700;line-height:1;
+  color:var(--fd);transition:color .8s ease;
+}
+.flap.ft span{top:var(--ftop)}
+.flap.fb span{top:var(--fbot)}
+.flap.ft.go{animation:fUp 145ms ease-in  forwards}
+.flap.fb.go{animation:fDn 165ms ease-out forwards;animation-delay:105ms}
+@keyframes fUp{from{transform:rotateX(0)}    to{transform:rotateX(-90deg)}}
+@keyframes fDn{from{transform:rotateX(90deg)}to{transform:rotateX(0)}}
+
+/* ═══════════════════════════════════════════
+   HOME SCREEN
+═══════════════════════════════════════════ */
+#home{
+  position:fixed;inset:0;
+  display:flex;flex-direction:column;
+  transition:opacity .48s ease;
+  background:#0a0906;
+}
+#home.gone{opacity:0;pointer-events:none}
+
+/* — focus panel — */
+.h-pa{
+  flex:1;min-height:0;
+  background:#110e0a;--bg:#110e0a;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:16px;cursor:pointer;touch-action:manipulation;
+  position:relative;
+  border-bottom:1px solid #221e16;
+  transition:background .2s;
+}
+.h-pa:active{background:#140f0b}
+
+/* — rest panel — */
+.h-pb{
+  flex:1;min-height:0;
+  background:#0a0c11;--bg:#0a0c11;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:16px;cursor:pointer;touch-action:manipulation;
+  border-top:1px solid #141820;
+  transition:background .2s;
+}
+.h-pb:active{background:#0b0d14}
+
+.h-plbl{
+  font-size:9px;letter-spacing:.38em;text-transform:uppercase;
+  font-weight:400;
+}
+.h-pa .h-plbl{color:#8a7458}
+.h-pb .h-plbl{color:#3e6080}
+
+/* sound button — inside focus panel */
+#h-snd{
+  position:absolute;bottom:16px;right:18px;
+  font-size:8px;letter-spacing:.16em;text-transform:uppercase;
+  color:#3a3020;cursor:pointer;touch-action:manipulation;
+  transition:color .18s;padding:4px 0;
+}
+#h-snd.on{color:#b08040}
+#h-snd:active{color:#806030}
+
+/* — center strip — */
+.h-strip{
+  flex:0 0 208px;
+  background:#0d0b08;
+  border-top:1px solid #221e16;
+  border-bottom:1px solid #141820;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:10px;padding:0 28px;
+}
+.h-wordmark{
+  font-family:var(--serif);
+  font-size:34px;line-height:1;
+  color:#c09868;letter-spacing:.06em;
+  margin-bottom:2px;
+}
+.h-rule{
+  width:min(120px,60%);height:1px;
+  background:linear-gradient(to right,transparent,#3a3020,transparent);
+  flex-shrink:0;
+}
+.h-pills{display:flex;gap:7px}
+.pill{
+  font-size:9px;letter-spacing:.1em;
+  padding:7px 13px;line-height:1;
+  background:#131108;color:#383020;
+  border:1px solid #201e14;border-radius:2px;
+  cursor:pointer;touch-action:manipulation;
+  transition:background .14s,color .14s,border-color .14s;
+}
+.pill.on{background:#2c2210;color:#d4a24e;border-color:#4a3818}
+.pill:active{background:#1c1a0e}
+.h-pname{
+  font-size:8px;letter-spacing:.34em;text-transform:uppercase;
+  color:#7a6a50;min-height:11px;
+}
+#sbtn{
+  font-size:10px;letter-spacing:.34em;text-transform:uppercase;
+  color:#b08868;background:none;
+  border:1px solid #342a1a;
+  padding:12px 44px;cursor:pointer;
+  touch-action:manipulation;line-height:1;
+  transition:background .14s,border-color .14s,color .14s;
+}
+#sbtn:active{background:#181006;border-color:#5a4228;color:#d4a870}
+.h-hint{
+  font-size:7px;letter-spacing:.24em;text-transform:uppercase;
+  color:#2e2618;
+}
+
+/* desktop: strip becomes sidebar */
+@media(min-width:768px){
+  #home{flex-direction:row}
+  .h-pa{border-bottom:none;border-right:1px solid #221e16}
+  .h-pb{border-top:none;border-left:1px solid #141820}
+  .h-strip{
+    flex:0 0 208px;
+    border-top:none;border-bottom:none;
+    border-left:1px solid #221e16;
+    border-right:1px solid #141820;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   CLOCK SCREEN
+═══════════════════════════════════════════ */
+#clk{
+  display:flex;flex-direction:column;
+  width:100vw;height:100dvh;
+  opacity:0;pointer-events:none;
+  transition:opacity .48s ease;
+}
+#clk.show{opacity:1;pointer-events:all}
+@media(min-width:768px){#clk{flex-direction:row}}
+
+.panel{
+  flex:1;position:relative;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  cursor:pointer;touch-action:manipulation;
+  transition:background-color .95s ease;
+  gap:16px;
+}
+#pa{border-bottom:1px solid #161616}
+@media(min-width:768px){
+  #pa{border-bottom:none;border-right:1px solid #161616}
+}
+
+/* panel labels */
+.p-lbl{
+  position:absolute;top:22px;left:24px;
+  font-size:9px;letter-spacing:.32em;text-transform:uppercase;
+  transition:color .8s ease;pointer-events:none;
+}
+#sess-ctr{
+  position:absolute;top:22px;right:24px;
+  font-size:9px;letter-spacing:.16em;
+  color:#242424;transition:color .5s;pointer-events:none;
+}
+.p-hint{
+  font-size:9px;letter-spacing:.22em;text-transform:uppercase;
+  min-height:13px;transition:color .45s;pointer-events:none;
+}
+/* overtime counter (replaces flip clock) */
+.ov-ctr{
+  font-weight:700;
+  font-size:clamp(46px,12vw,78px);
+  letter-spacing:-.025em;color:#c42020;
+  display:none;line-height:1;
+}
+@media(min-width:768px){.ov-ctr{font-size:clamp(40px,5.2vw,70px)}}
+
+/* increment earned badge */
+.inc-badge{
+  position:absolute;bottom:22px;right:24px;
+  font-size:10px;letter-spacing:.12em;color:#2a6888;
+  opacity:0;transition:opacity .7s;pointer-events:none;
+}
+.inc-badge.show{opacity:1}
+
+/* clock footer: sound + exit */
+#clk-footer{
+  position:fixed;bottom:0;left:0;right:0;
+  display:none;justify-content:space-between;align-items:center;
+  padding:0 24px;
+  padding-bottom:max(6px,env(safe-area-inset-bottom));
+  pointer-events:none;z-index:20;
+}
+#clk-footer.show{display:flex}
+#clk-snd{
+  font-size:8px;letter-spacing:.16em;text-transform:uppercase;
+  color:#202020;cursor:pointer;
+  touch-action:manipulation;pointer-events:all;
+  transition:color .2s;padding:12px 0;
+}
+#clk-snd.on{color:#3e3420}
+#clk-snd:active{color:#706040}
+#exit-btn{
+  font-size:8px;letter-spacing:.24em;text-transform:uppercase;
+  color:#1e1e1e;background:none;border:none;
+  padding:12px 0;cursor:pointer;
+  touch-action:manipulation;pointer-events:all;
+  transition:color .2s;
+}
+#exit-btn:active{color:#606060}
+
+@media(prefers-reduced-motion:reduce){
+  *{transition:none!important;animation:none!important}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ HOME ══════════════════════════════ -->
+<div id="home">
+
+  <div class="h-panel h-pa" onclick="homeNext()">
+    <div class="h-plbl">FOCUS</div>
+    <div class="flip-row" id="h-fda"></div>
+    <div id="h-snd" onclick="cycleSnd(event)">· OFF</div>
+  </div>
+
+  <div class="h-strip">
+    <div class="h-wordmark">TEMPO</div>
+    <div class="h-rule"></div>
+    <div class="h-pills" id="h-pills"></div>
+    <div class="h-pname" id="h-pname">CLASSIC</div>
+    <button id="sbtn">START</button>
+    <div class="h-hint">tap panels to cycle</div>
+  </div>
+
+  <div class="h-panel h-pb" onclick="homeNext()">
+    <div class="flip-row" id="h-fdb"></div>
+    <div class="h-plbl">REST</div>
+  </div>
+
+</div>
+
+<!-- ══ CLOCK ═════════════════════════════ -->
+<div id="clk">
+  <div class="panel" id="pa" onclick="tapA()">
+    <span class="p-lbl" id="lbl-a">FOCUS</span>
+    <span id="sess-ctr">0 / 4</span>
+    <div class="flip-row" id="fda"></div>
+    <div class="ov-ctr"   id="ovd"></div>
+    <div class="p-hint"   id="ha"></div>
+    <div class="inc-badge" id="inc-b">+2:00</div>
+  </div>
+  <div class="panel" id="pb" onclick="tapB()">
+    <span class="p-lbl" id="lbl-b">REST</span>
+    <div class="flip-row" id="fdb"></div>
+    <div class="p-hint"   id="hb"></div>
+  </div>
+</div>
+
+<div id="clk-footer">
+  <div id="clk-snd" onclick="cycleSnd()">· OFF</div>
+  <button id="exit-btn" onclick="doExit()">EXIT ×</button>
+</div>
+
+<script>
+// ── PRESETS ──────────────────────────────────────────
+const PRESETS=[
+  {name:'SPRINT',    f:15, r:3 },
+  {name:'CLASSIC',   f:25, r:5 },
+  {name:'DEEP',      f:50, r:10},
+  {name:'ULTRADIAN', f:90, r:20},
+];
+const DELAY=5000, WARN_MS=5000, INC=120000;
+const NOTIF_5MIN=5*60*1000;
+
+// ── FLIP DIGIT ───────────────────────────────────────
+class FlipDigit{
+  constructor(parent){
+    this.el=document.createElement('div');
+    this.el.className='fu';
+    this.el.innerHTML=
+      '<div class="fh t"><span></span></div>'+
+      '<div class="fh b"><span></span></div>'+
+      '<div class="flap ft"><span></span></div>'+
+      '<div class="flap fb"><span></span></div>';
+    parent.appendChild(this.el);
+    const c=this.el.children;
+    this.sT=c[0].querySelector('span'); this.sB=c[1].querySelector('span');
+    this.fT=c[2]; this.fB=c[3];
+    this.fsT=c[2].querySelector('span'); this.fsB=c[3].querySelector('span');
+    this.cur=null; this._to=null;
+  }
+  set(n,anim=true){
+    const ns=String(n);
+    if(ns===this.cur)return;
+    const prev=this.cur; this.cur=ns;
+    if(prev===null||!anim){
+      [this.sT,this.sB,this.fsT,this.fsB].forEach(e=>e.textContent=ns);
+      return;
+    }
+    this.sT.textContent=ns;
+    this.fsT.textContent=prev;
+    this.fsB.textContent=ns;
+    this.fT.classList.remove('go'); this.fB.classList.remove('go');
+    void this.fT.offsetWidth;
+    this.fT.classList.add('go'); this.fB.classList.add('go');
+    clearTimeout(this._to);
+    this._to=setTimeout(()=>{
+      this.sB.textContent=ns;
+      this.fT.classList.remove('go'); this.fB.classList.remove('go');
+      this.fsT.textContent=ns; this.fsB.textContent=ns;
+    },310);
+  }
+  color(c){
+    this.el.querySelectorAll('span').forEach(s=>s.style.color=c);
+    this.el.style.setProperty('--fd',c);
+  }
+  card(c){
+    this.el.querySelectorAll('.fh,.flap').forEach(e=>e.style.backgroundColor=c);
+    this.el.style.setProperty('--fc',c);
+  }
+}
+
+// ── FLIP DISPLAY ─────────────────────────────────────
+class FlipDisplay{
+  constructor(id){
+    const w=document.getElementById(id);
+    this.d=[new FlipDigit(w),new FlipDigit(w)];
+    this.sep=document.createElement('div');
+    this.sep.className='flip-sep'; this.sep.textContent=':';
+    w.appendChild(this.sep);
+    this.d.push(new FlipDigit(w)); this.d.push(new FlipDigit(w));
+    this._ls=-1;
+  }
+  update(ms,anim=true){
+    const s=Math.max(0,Math.ceil(ms/1000));
+    if(s===this._ls&&anim)return;
+    this._ls=s;
+    const m=Math.floor(s/60),sc=s%60;
+    [Math.floor(m/10),m%10,Math.floor(sc/10),sc%10]
+      .forEach((d,i)=>this.d[i].set(d,anim));
+  }
+  color(c){this.d.forEach(d=>d.color(c));this.sep.style.color=c}
+  card(c){this.d.forEach(d=>d.card(c))}
+  size(fw,fh,ffs){
+    const tp=((fh/2)-(ffs/2))+'px', bt=(-(ffs/2))+'px';
+    this.d.forEach(d=>{
+      d.el.style.setProperty('--fw',fw+'px');
+      d.el.style.setProperty('--fh',fh+'px');
+      d.el.style.setProperty('--ffs',ffs+'px');
+      d.el.style.setProperty('--ftop',tp);
+      d.el.style.setProperty('--fbot',bt);
+    });
+    this.sep.style.fontSize=ffs+'px';
+  }
+  reset(){this.d.forEach(d=>{d.cur=null});this._ls=-1}
+}
+
+// ── INSTANCES ────────────────────────────────────────
+const hA =new FlipDisplay('h-fda');
+const hB =new FlipDisplay('h-fdb');
+const fdA=new FlipDisplay('fda');
+const fdB=new FlipDisplay('fdb');
+// home previews: fw=48 fh=68 ffs=60 → ftop=4 fbot=-30
+hA.size(48,68,60); hB.size(48,68,60);
+
+// ── AMBIENT ENGINE ───────────────────────────────────
+class AmbientEngine{
+  constructor(){
+    this.ctx=null; this.out=null;
+    this.nodes=[]; this.mode='off';
+    this.tTO=null; this._swTO=null; // fix: track switch timeout
+  }
+  _init(){
+    if(!this.ctx){
+      this.ctx=new(window.AudioContext||window.webkitAudioContext)();
+      this.out=this.ctx.createGain(); this.out.gain.value=0;
+      this.out.connect(this.ctx.destination);
+    }
+    if(this.ctx.state==='suspended')this.ctx.resume();
+  }
+  _noise(type){
+    const sr=this.ctx.sampleRate, len=sr*3;
+    const buf=this.ctx.createBuffer(1,len,sr);
+    const d=buf.getChannelData(0);
+    if(type==='brown'){
+      let l=0;
+      for(let i=0;i<len;i++){
+        const w=Math.random()*2-1;
+        d[i]=Math.max(-1,Math.min(1,(l+0.02*w)/1.02)); l=d[i];
+      }
+    } else if(type==='white'){
+      for(let i=0;i<len;i++) d[i]=Math.random()*2-1;
+    } else { // pink — Voss algorithm
+      let b0=0,b1=0,b2=0,b3=0,b4=0,b5=0,b6=0;
+      for(let i=0;i<len;i++){
+        const w=Math.random()*2-1;
+        b0=0.99886*b0+w*0.0555179; b1=0.99332*b1+w*0.0750759;
+        b2=0.96900*b2+w*0.1538520; b3=0.86650*b3+w*0.3104856;
+        b4=0.55000*b4+w*0.5329522; b5=-0.7616*b5-w*0.0168980;
+        d[i]=Math.max(-1,Math.min(1,(b0+b1+b2+b3+b4+b5+b6+w*0.5362)*0.11));
+        b6=w*0.115926;
+      }
+    }
+    return buf;
+  }
+  _src(buf){const s=this.ctx.createBufferSource();s.buffer=buf;s.loop=true;return s}
+  _filt(type,freq,Q){const f=this.ctx.createBiquadFilter();f.type=type;f.frequency.value=freq;if(Q)f.Q.value=Q;return f}
+  _gain(v){const g=this.ctx.createGain();g.gain.value=v;return g}
+  _wire(src,...chain){
+    let p=src; chain.forEach(n=>{p.connect(n);p=n});
+    p.connect(this.out); src.start();
+    this.nodes.push(src,...chain);
+  }
+  _fade(to,t=1.2){
+    const g=this.out.gain, now=this.ctx.currentTime;
+    g.cancelScheduledValues(now); g.setValueAtTime(g.value,now);
+    g.linearRampToValueAtTime(to,now+t);
+  }
+  _kill(){
+    clearTimeout(this.tTO);
+    this.nodes.forEach(n=>{try{n.stop?.();n.disconnect?.()}catch(e){}});
+    this.nodes=[];
+  }
+  select(mode){
+    this._init();
+    this.mode=mode;
+    // FIX: cancel any pending switch before queuing new one
+    clearTimeout(this._swTO);
+    this._fade(0,.4);
+    this._swTO=setTimeout(()=>{this._kill();this._build(mode)},450);
+    updateSndUI();
+  }
+  _build(mode){
+    if(mode==='off')return;
+    if(mode==='rain'){
+      this._wire(this._src(this._noise('brown')),this._gain(0.5));
+      this._wire(this._src(this._noise('white')),this._filt('highpass',2800),this._gain(0.09));
+      this._fade(0.55);
+    } else if(mode==='storm'){
+      this._wire(this._src(this._noise('brown')),this._gain(0.7));
+      this._wire(this._src(this._noise('white')),this._filt('highpass',2400),this._gain(0.14));
+      this._wire(this._src(this._noise('brown')),this._filt('lowpass',90),this._gain(0.4));
+      this._fade(0.6);
+      this._thunder();
+    } else if(mode==='cafe'){
+      this._wire(this._src(this._noise('pink')),this._filt('bandpass',700,0.35),this._gain(1.0));
+      this._wire(this._src(this._noise('pink')),this._filt('highshelf',3500),this._gain(0.18));
+      this._fade(0.4);
+    } else if(mode==='library'){
+      this._wire(this._src(this._noise('pink')),this._filt('lowpass',380),this._gain(0.7));
+      this._fade(0.16);
+    }
+  }
+  _thunder(){
+    if(this.mode!=='storm')return;
+    this.tTO=setTimeout(()=>{
+      if(this.mode!=='storm')return;
+      const src=this._src(this._noise('white'));
+      const env=this._gain(0);
+      const lp=this._filt('lowpass',280);
+      src.connect(lp); lp.connect(env); env.connect(this.out);
+      this.nodes.push(src,lp,env); src.start();
+      const t=this.ctx.currentTime;
+      env.gain.setValueAtTime(0,t);
+      env.gain.linearRampToValueAtTime(0.65,t+0.06);
+      env.gain.exponentialRampToValueAtTime(0.001,t+4.5);
+      setTimeout(()=>{
+        try{src.stop()}catch(e){}
+        this.nodes=this.nodes.filter(n=>n!==src&&n!==lp&&n!==env);
+      },5500);
+      this._thunder();
+    },9000+Math.random()*26000);
+  }
+}
+const ambient=new AmbientEngine();
+const SND_MODES=['off','rain','storm','cafe','library'];
+const SND_LBLS ={'off':'· OFF','rain':'· RAIN','storm':'· STORM','cafe':'· CAFE','library':'· LIB'};
+let sndIdx=0;
+function cycleSnd(e){
+  if(e)e.stopPropagation();
+  sndIdx=(sndIdx+1)%SND_MODES.length;
+  ambient.select(SND_MODES[sndIdx]);
+  vibe(30);
+}
+function updateSndUI(){
+  const lbl=SND_LBLS[SND_MODES[sndIdx]], on=sndIdx>0;
+  ['h-snd','clk-snd'].forEach(id=>{
+    const el=document.getElementById(id);
+    el.textContent=lbl; el.classList.toggle('on',on);
+  });
+}
+
+// ── COLOR MATH ───────────────────────────────────────
+const pc=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));
+const lp=(a,b,t)=>a.map((v,i)=>Math.round(v+(b[i]-v)*t));
+const rc=([r,g,b])=>`rgb(${r},${g},${b})`;
+const B0=pc('#060606'),B1=pc('#130a00'),B2=pc('#250500'),B3=pc('#3d0000');
+const T0=pc('#c8c8c8'),T1=pc('#f5c842'),T2=pc('#f07832'),T3=pc('#e82e2e');
+const urgBg=p=>rc(
+  p>.4 ?B0:p>.2 ?lp(B0,B1,(0.4-p)/0.2):
+  p>.05?lp(B1,B2,(0.2-p)/0.15):lp(B2,B3,Math.min((0.05-p)/0.05,1))
+);
+const urgTx=p=>rc(
+  p>.4 ?T0:p>.2 ?lp(T0,T1,(0.4-p)/0.2):
+  p>.05?lp(T1,T2,(0.2-p)/0.15):lp(T2,T3,Math.min((0.05-p)/0.05,1))
+);
+
+// ── HAPTICS ──────────────────────────────────────────
+const vibe=p=>{try{navigator.vibrate?.(p)}catch(e){}};
+const H={
+  tap:  ()=>vibe([38,18,76]),
+  run:  ()=>vibe([58,22,96]),   // delay→run transition only
+  warn: ()=>vibe([38,22,38,22,38]),
+  done: ()=>vibe([96,42,190]),
+  bDone:()=>vibe([58,32,58,32,58]),
+  tick: ()=>vibe(14),
+};
+
+// ── WAKE LOCK ────────────────────────────────────────
+let wl=null;
+async function grabWake(){
+  if(wl)return; // FIX: guard against double-request
+  try{if('wakeLock'in navigator)wl=await navigator.wakeLock.request('screen')}catch(e){}
+}
+function dropWake(){try{wl?.release()}catch(e){}wl=null}
+
+// ── NOTIFICATIONS ────────────────────────────────────
+let notifGranted=false;
+async function askNotif(){
+  if(!('Notification'in window))return;
+  if(Notification.permission==='granted'){notifGranted=true;return}
+  if(Notification.permission!=='denied'){
+    notifGranted=(await Notification.requestPermission())==='granted';
+  }
+}
+function notify(title,body){
+  if(!notifGranted||document.visibilityState==='visible')return;
+  try{new Notification(title,{body,icon:'icon.svg',tag:'tempo',renotify:true,silent:true})}catch(e){}
+}
+
+// ── APP STATE ────────────────────────────────────────
+let pidx=1, S='home';
+let aTotal,bTotal,aMs,bMs,aOver=0,delMs=DELAY;
+let sess=0,incPend=false,warnFd=false,notifFd=false;
+let ticker=null,lastT=null,incTO=null;
+
+const $=id=>document.getElementById(id);
+const homeEl=$('home'), clkEl=$('clk'), footer=$('clk-footer');
+const pa=$('pa'), pb=$('pb');
+const lblA=$('lbl-a'), lblB=$('lbl-b');
+const sessCtr=$('sess-ctr'), ha=$('ha'), hb=$('hb');
+const ovd=$('ovd'), incBadge=$('inc-b'), hPname=$('h-pname');
+const fdaRow=$('fda'); // FIX: cache DOM ref
+
+// ── HOME PILLS ───────────────────────────────────────
+PRESETS.forEach((p,i)=>{
+  const el=document.createElement('div');
+  el.className='pill'+(i===1?' on':'');
+  el.textContent=String(p.f);
+  el.addEventListener('click',e=>{e.stopPropagation();pickPreset(i,true);vibe(40)});
+  $('h-pills').appendChild(el);
+});
+
+function pickPreset(i,anim){
+  pidx=i;
+  document.querySelectorAll('.pill').forEach((p,j)=>p.classList.toggle('on',j===i));
+  hPname.textContent=PRESETS[i].name;
+  hA.color('#c0a872'); hA.card('#1e1a12'); hA.sep.style.color='#7a6040';
+  hB.color('#5890b4'); hB.card('#121a24'); hB.sep.style.color='#345880';
+  hA.update(PRESETS[i].f*60000,anim);
+  hB.update(PRESETS[i].r*60000,anim);
+}
+function homeNext(){pickPreset((pidx+1)%PRESETS.length,true);vibe(40)}
+pickPreset(1,false);
+
+$('sbtn').addEventListener('click',()=>{
+  askNotif();
+  initClock();
+  homeEl.classList.add('gone');
+  clkEl.classList.add('show');
+  footer.classList.add('show');
+});
+
+// ── CLOCK INIT ───────────────────────────────────────
+function initClock(){
+  const p=PRESETS[pidx];
+  aTotal=p.f*60000; bTotal=p.r*60000;
+  aMs=aTotal; bMs=bTotal;
+  aOver=0; delMs=DELAY;
+  sess=0; incPend=false; warnFd=false; notifFd=false;
+  S='idle'; stopTick();
+  fdA.reset(); fdB.reset();
+  fdA.update(aMs,false); fdB.update(bMs,false);
+  render();
+}
+
+// ── TAPS ─────────────────────────────────────────────
+function tapA(){
+  if(S==='idle'){
+    S='a_del'; delMs=DELAY; warnFd=false;
+    startTick(); H.tap();
+  } else if(S==='a_run'){
+    incPend=false; gotoBreak(); H.tap();
+  } else if(S==='a_ov'){
+    gotoBreak(); H.tap();
+  } else if(S==='b_done'){
+    aMs=aTotal; bMs=bTotal;
+    fdA.reset(); fdB.reset();
+    fdA.update(aMs,false); fdB.update(bMs,false);
+    S='a_del'; delMs=DELAY; warnFd=false;
+    startTick(); H.tap();
+  }
+  render();
+}
+function tapB(){
+  if(S==='a_ov'){gotoBreak();H.tap()}
+  else if(S==='b_run'){gotoFocus();H.tap()}
+  render();
+}
+function gotoBreak(){
+  stopTick();
+  bMs=incPend?bTotal+INC:bTotal;
+  if(incPend)showInc();
+  incPend=false; warnFd=false; notifFd=false;
+  fdB.reset(); fdB.update(bMs,false);
+  S='b_run'; startTick(); grabWake();
+  // FIX: removed duplicate notify() here — tick() handles it
+}
+function gotoFocus(){
+  stopTick();
+  aMs=aTotal; aOver=0; warnFd=false; incPend=false; notifFd=false;
+  fdA.reset(); fdA.update(aMs,false);
+  S='a_del'; delMs=DELAY; startTick();
+}
+
+// ── TICKER ───────────────────────────────────────────
+function startTick(){
+  stopTick(); lastT=performance.now();
+  ticker=setInterval(()=>{
+    if(lastT===null)return;
+    const now=performance.now(); tick(now-lastT); lastT=now;
+  },80);
+}
+function stopTick(){if(ticker){clearInterval(ticker);ticker=null}dropWake()}
+
+function tick(dt){
+  if(S==='a_del'){
+    const ps=Math.ceil(delMs/1000); delMs-=dt;
+    const cs=Math.ceil(delMs/1000);
+    if(cs<ps&&cs>0) H.tick();
+    if(delMs<=0){S='a_run';delMs=0;grabWake();H.run()} // FIX: H.run() not H.start()
+
+  } else if(S==='a_run'){
+    aMs-=dt;
+    if(!warnFd&&aMs<=WARN_MS&&aMs>0){warnFd=true;H.warn()}
+    if(aMs<=0){
+      aMs=0; aOver=0; incPend=true; sess++;
+      S='a_ov'; H.done();
+      notify('Focus complete','Your rest is ready.');
+    } else fdA.update(aMs,true);
+
+  } else if(S==='a_ov'){
+    aOver+=dt;
+
+  } else if(S==='b_run'){
+    bMs-=dt;
+    // FIX: guard — only notify if break is longer than 5 min
+    if(!notifFd&&bTotal>NOTIF_5MIN&&bMs<=NOTIF_5MIN&&bMs>0){
+      notifFd=true;
+      notify('Break ending soon','5 minutes left in your rest.');
+    }
+    if(!warnFd&&bMs<=WARN_MS&&bMs>0){warnFd=true;H.warn()}
+    if(bMs<=0){
+      bMs=0; S='b_done'; fdB.update(0,false);
+      stopTick(); H.bDone();
+      notify('Break over','Time to focus again.');
+    } else fdB.update(bMs,true);
+  }
+  render();
+}
+
+// ── RENDER ───────────────────────────────────────────
+function setBg(el,c){el.style.backgroundColor=c;el.style.setProperty('--bg',c)}
+
+function render(){
+  const pct=aMs/aTotal;
+
+  // ─ Panel A
+  if(S==='idle'){
+    setBg(pa,'#080808');
+    fdaRow.style.display='flex'; ovd.style.display='none';
+    fdA.color('#363636'); fdA.card('#141414');
+    ha.style.color='#606060'; ha.textContent='TAP TO BEGIN';
+    lblA.style.color='#383838';
+
+  } else if(S==='a_del'){
+    setBg(pa,'#080808');
+    fdaRow.style.display='flex'; ovd.style.display='none';
+    fdA.color('#888080'); fdA.card('#181818');
+    ha.style.color='#404040';
+    ha.textContent='STARTING IN '+Math.max(1,Math.ceil(delMs/1000));
+    lblA.style.color='#505050';
+
+  } else if(S==='a_run'){
+    setBg(pa,urgBg(pct));
+    fdaRow.style.display='flex'; ovd.style.display='none';
+    fdA.color(urgTx(pct)); fdA.card('#181818');
+    ha.textContent=''; lblA.style.color='#505050';
+
+  } else if(S==='a_ov'){
+    setBg(pa,'#130000');
+    fdaRow.style.display='none'; ovd.style.display='block';
+    const os=Math.floor(aOver/1000);
+    ovd.textContent='+'+String(Math.floor(os/60)).padStart(2,'0')+':'+String(os%60).padStart(2,'0');
+    ha.style.color='#461212'; ha.textContent='OVERTIME · TAP TO REST';
+    lblA.style.color='#3e1414';
+
+  } else { // b_run / b_done
+    setBg(pa,'#080808');
+    fdaRow.style.display='flex'; ovd.style.display='none';
+    fdA.color('#1a1a1a'); fdA.card('#101010');
+    ha.textContent=''; lblA.style.color='#1a1a1a';
+  }
+
+  // ─ Panel B
+  if(['idle','a_del','a_run'].includes(S)){
+    setBg(pb,'#080808');
+    fdB.color('#161616'); fdB.card('#101010');
+    hb.textContent=''; lblB.style.color='#161616';
+
+  } else if(S==='a_ov'){
+    setBg(pb,'#080808');
+    fdB.color('#222222'); fdB.card('#101010');
+    hb.style.color='#183848';
+    hb.textContent=incPend?'+ 2:00 EARNED':'';
+    lblB.style.color='#222222';
+
+  } else if(S==='b_run'){
+    setBg(pb,'#040a10');
+    fdB.color('#3888ae'); fdB.card('#0a1820');
+    hb.textContent=''; lblB.style.color='#1e5068';
+
+  } else if(S==='b_done'){
+    setBg(pb,'#040a10');
+    fdB.color('#102030'); fdB.card('#060e18');
+    hb.style.color='#102030';
+    hb.textContent=(sess>0&&sess%4===0)?'CONSIDER A LONG BREAK':'TAP FOCUS TO RESUME';
+    lblB.style.color='#102030';
+  }
+
+  // session counter
+  const s4=(sess%4===0&&sess>0)?4:sess%4;
+  sessCtr.textContent=`${s4} / 4`;
+  sessCtr.style.color=(sess>0&&sess%4===0)?'#2a6888':'#2a2a2a';
+}
+
+// ── INCREMENT BADGE ──────────────────────────────────
+function showInc(){
+  incBadge.classList.add('show');
+  clearTimeout(incTO);
+  incTO=setTimeout(()=>incBadge.classList.remove('show'),3500);
+}
+
+// ── EXIT ─────────────────────────────────────────────
+function doExit(){
+  stopTick();
+  clkEl.classList.remove('show');
+  homeEl.classList.remove('gone');
+  footer.classList.remove('show');
+  fdA.reset(); fdB.reset();
+}
+
+// ── SERVICE WORKER ───────────────────────────────────
+if('serviceWorker'in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('sw.js')
+      .catch(e=>console.warn('SW:',e));
+  });
+}
+
+// ── SYSTEM ───────────────────────────────────────────
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden) lastT=null;
+  else if(ticker) lastT=performance.now();
+});
+document.addEventListener('touchmove',e=>e.preventDefault(),{passive:false});
+</script>
+</body>
+</html>

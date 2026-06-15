@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="88" fill="#0a0906"/>
+  <!-- focus card warm -->
+  <rect x="60" y="148" width="172" height="216" rx="10" fill="#1e1a12"/>
+  <rect x="60" y="252" width="172" height="3"   fill="#0a0906"/>
+  <!-- rest card cool -->
+  <rect x="280" y="148" width="172" height="216" rx="10" fill="#121a24"/>
+  <rect x="280" y="252" width="172" height="3"   fill="#0a0906"/>
+  <!-- warm digit -->
+  <text x="146" y="274" font-family="monospace" font-weight="bold" font-size="110"
+        fill="#c0a060" text-anchor="middle" dominant-baseline="middle">2</text>
+  <!-- cool digit -->
+  <text x="366" y="274" font-family="monospace" font-weight="bold" font-size="110"
+        fill="#5090b8" text-anchor="middle" dominant-baseline="middle">5</text>
+</svg>
