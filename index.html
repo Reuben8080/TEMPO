@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#050403">
@@ -26,10 +26,13 @@
   --text-dark: #383430;
   --gold: #c2a67e;
   
-  /* Engine Flip Tokens */
-  --fw:62px;--fh:88px;--ffs:76px;
-  --ftop:6px;--fbot:-38px;
-  --frad:4px;--fc:#0f0e0d;--fd:#e8e5e0;
+  /* Fluid Engine Flip Tokens (Absolute Scaling Architecture) */
+  --fw: clamp(52px, 12vw, 66px);
+  --fh: clamp(74px, 17vw, 92px);
+  --ffs: clamp(62px, 14vw, 78px);
+  --ftop: calc((var(--fh) / 2) - (var(--ffs) / 2));
+  --fbot: calc(0px - (var(--ffs) / 2));
+  --frad: 4px; --fc: #0f0e0d; --fd: #e8e5e0;
 }
 
 html,body{
@@ -69,7 +72,7 @@ html,body{
 .canvas[data-state="b_run"] { --ambient-glow: radial-gradient(circle at 50% 60%, rgba(16, 48, 69, 0.35) 0%, rgba(3, 5, 8, 0) 70%); }
 
 /* ═══════════════════════════════════════════
-   FLIP ENGINE COMPONENTS (Sleekened/Integrated)
+   FLIP ENGINE COMPONENTS
 ═══════════════════════════════════════════ */
 .flip-row{display:flex;align-items:center;gap:4px}
 .flip-sep{
@@ -168,7 +171,7 @@ html,body{
 .h-hero {
   align-self:center;
   text-align:center;
-  margin-top:-20px;
+  margin-top:-10px;
 }
 #h-pname {
   font-family:var(--serif);
@@ -176,22 +179,28 @@ html,body{
   font-weight:400;
   letter-spacing:0.04em;
   color:var(--text-bright);
-  margin-bottom:32px;
+  margin-bottom:24px;
+  cursor:pointer;
 }
 .h-intervals {
   display:flex;
   align-items:center;
   justify-content:center;
-  gap:40px;
+  gap:32px;
+  cursor:pointer;
+  /* Micro-scale adjustments for home preview context */
+  --fw: clamp(34px, 8.5vw, 40px);
+  --fh: clamp(48px, 12vw, 56px);
+  --ffs: clamp(40px, 10vw, 48px);
 }
 .h-int-group {
   display:flex;
   flex-direction:column;
   align-items:center;
-  gap:16px;
+  gap:12px;
 }
 .h-label {
-  font-size:10px;
+  font-size:9px;
   font-weight:600;
   letter-spacing:0.25em;
   color:var(--text-dark);
@@ -201,14 +210,14 @@ html,body{
   font-style:italic;
   font-size:20px;
   color:var(--text-dark);
-  margin-top:24px;
+  margin-top:20px;
 }
 
 /* Typographic Continuous Index Selectors */
 .h-bottom {
   display:flex;
   flex-direction:column;
-  gap:32px;
+  gap:24px;
 }
 .h-spectrum-wrapper {
   display:flex;
@@ -249,11 +258,19 @@ html,body{
   letter-spacing:0.3em;
   color:var(--gold);
   cursor:pointer;
-  padding:16px;
+  padding:12px;
   align-self:center;
   transition:opacity 0.2s, transform 0.2s;
 }
 #sbtn:active { transform:scale(0.98); opacity:0.8; }
+.h-hint {
+  font-size:8px;
+  letter-spacing:0.25em;
+  color:var(--text-dark);
+  text-transform:uppercase;
+  text-align:center;
+  margin-top:-8px;
+}
 
 /* ═══════════════════════════════════════════
    THE ACTIVE HORIZON SCREEN
@@ -294,8 +311,32 @@ html,body{
   flex-direction:column;
   align-items:center;
   justify-content:center;
-  gap:20px;
+  gap:clamp(12px, 3vh, 20px);
 }
+
+/* Twin-Clock Visual Component Packaging */
+.c-timer-container {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:10px;
+  transition:opacity 0.6s ease, transform 0.6s ease;
+}
+.c-timer-label {
+  font-size:8px;
+  font-weight:600;
+  letter-spacing:0.3em;
+  color:var(--text-dark);
+  text-transform:uppercase;
+  transition:color 0.6s ease;
+}
+.c-timer-divider {
+  width:44px;
+  height:1px;
+  background:linear-gradient(to right, transparent, rgba(255, 255, 255, 0.05), transparent);
+  margin:4px 0;
+}
+
 .ov-ctr {
   font-family:var(--mono);
   font-weight:400;
@@ -306,11 +347,13 @@ html,body{
   line-height:1;
 }
 .c-hint {
-  font-size:11px;
+  font-size:10px;
   letter-spacing:0.2em;
   color:var(--text-dark);
   min-height:14px;
   text-transform:uppercase;
+  text-align:center;
+  margin-top:4px;
 }
 .inc-badge {
   font-size:11px;
@@ -382,20 +425,32 @@ html,body{
         <div class="h-spectrum" id="h-pills"></div>
       </div>
       <button id="sbtn">ENTER INTERVAL</button>
+      <div class="h-hint">SELECT INDEX PRESET · TAP HERO OR COMPONENT TO CYCLE</div>
     </footer>
   </div>
 
   <div id="clk">
     <header class="c-top">
-      <span class="c-state-lbl" id="c-state-indicator">FOCUS</span>
+      <span class="c-state-lbl" id="c-state-indicator">SEQUENCE READY</span>
       <span id="sess-ctr">0 / 4</span>
     </header>
 
     <main class="c-main" id="clk-trigger">
-      <div class="flip-row" id="fda"></div>
-      <div class="flip-row" id="fdb" style="display:none;"></div>
-      <div class="ov-ctr" id="ovd"></div>
-      <div class="c-hint" id="ha"></div>
+      
+      <div class="c-timer-container" id="tg-a">
+        <span class="c-timer-label" id="lbl-a">FOCUS</span>
+        <div class="flip-row" id="fda"></div>
+        <div class="ov-ctr" id="ovd"></div>
+      </div>
+      
+      <div class="c-timer-divider"></div>
+      
+      <div class="c-timer-container" id="tg-b">
+        <span class="c-timer-label" id="lbl-b">REST</span>
+        <div class="flip-row" id="fdb"></div>
+      </div>
+      
+      <div class="c-hint" id="ha">TAP TO INITIATE TRACK</div>
       <div class="inc-badge" id="inc-b">+2:00 METRIC</div>
     </main>
 
@@ -484,17 +539,6 @@ class FlipDisplay{
   }
   color(c){this.d.forEach(d=>d.color(c));this.sep.style.color=c}
   card(c){this.d.forEach(d=>d.card(c))}
-  size(fw,fh,ffs){
-    const tp=((fh/2)-(ffs/2))+'px', bt=(-(ffs/2))+'px';
-    this.d.forEach(d=>{
-      d.el.style.setProperty('--fw',fw+'px');
-      d.el.style.setProperty('--fh',fh+'px');
-      d.el.style.setProperty('--ffs',ffs+'px');
-      d.el.style.setProperty('--ftop',tp);
-      d.el.style.setProperty('--fbot',bt);
-    });
-    this.sep.style.fontSize=ffs+'px';
-  }
   reset(){this.d.forEach(d=>{d.cur=null});this._ls=-1}
 }
 
@@ -503,8 +547,6 @@ const hA =new FlipDisplay('h-fda');
 const hB =new FlipDisplay('h-fdb');
 const fdA=new FlipDisplay('fda');
 const fdB=new FlipDisplay('fdb');
-hA.size(38,54,46); hB.size(38,54,46);
-fdA.size(68,96,82); fdB.size(68,96,82);
 
 // ── AUDIO LANDSCAPE ENGINE ───────────────────────────
 class AmbientEngine{
@@ -648,6 +690,7 @@ const canvasEl=$('canvas'), homeEl=$('home'), clkEl=$('clk');
 const stateIndicator=$('c-state-indicator'), sessCtr=$('sess-ctr'), ha=$('ha');
 const ovd=$('ovd'), incBadge=$('inc-b'), hPname=$('h-pname');
 const fdaView=$('fda'), fdbView=$('fdb');
+const lblA=$('lbl-a'), lblB=$('lbl-b');
 
 // ── BUILD TYPOGRAPHIC SPECTRUM INDEX ─────────────────
 PRESETS.forEach((p,i)=>{
@@ -761,41 +804,53 @@ function render(){
   canvasEl.setAttribute('data-state', S);
 
   if(S==='idle'){
-    fdaView.style.display='flex'; fdbView.style.display='none'; ovd.style.display='none';
+    fdaView.style.display='flex'; ovd.style.display='none';
     fdA.color('#544e46'); fdA.card('#0f0e0d');
+    fdB.color('#2c2824'); fdB.card('#0b0a09'); // Shadow State Rest
     stateIndicator.textContent='SEQUENCE READY'; stateIndicator.style.color='var(--text-soft)';
-    ha.textContent='TAP TO INITIATE TRACK';
+    lblA.style.color='var(--text-soft)'; lblB.style.color='var(--text-dark)';
+    ha.textContent='TAP CONSOLE WINDOW TO INITIATE TRACK';
 
   } else if(S==='a_del'){
-    fdaView.style.display='flex'; fdbView.style.display='none'; ovd.style.display='none';
+    fdaView.style.display='flex'; ovd.style.display='none';
     fdA.color('#e8e5e0'); fdA.card('#171513');
-    stateIndicator.textContent='SEQUENCE FOCUS'; stateIndicator.style.color='var(--text-bright)';
+    fdB.color('#22201e'); fdB.card('#0f0e0d'); // Shadow State Rest
+    stateIndicator.textContent='SEQUENCE INITIALIZING'; stateIndicator.style.color='var(--text-bright)';
+    lblA.style.color='var(--text-bright)'; lblB.style.color='#22201e';
     ha.textContent='CALIBRATING ENGINE IN '+Math.max(1,Math.ceil(delMs/1000));
 
   } else if(S==='a_run'){
-    fdaView.style.display='flex'; fdbView.style.display='none'; ovd.style.display='none';
+    fdaView.style.display='flex'; ovd.style.display='none';
     fdA.color('#ffbe85'); fdA.card('#0f0e0d');
+    fdB.color('#28221c'); fdB.card('#0c0b0a'); // Shadow State Rest
     stateIndicator.textContent='FOCUSING ENVIRONMENT'; stateIndicator.style.color='var(--gold)';
-    ha.textContent='';
+    lblA.style.color='var(--gold)'; lblB.style.color='#28221c';
+    ha.textContent='TAP ANYWHERE ON CONSOLE TO TRANSITION REST';
 
   } else if(S==='a_ov'){
-    fdaView.style.display='none'; fdbView.style.display='none'; ovd.style.display='block';
+    fdaView.style.display='none'; ovd.style.display='block';
     const os=Math.floor(aOver/1000);
     ovd.textContent='+'+String(Math.floor(os/60)).padStart(2,'0')+':'+String(os%60).padStart(2,'0');
+    fdB.color('#3a221a'); fdB.card('#0c0b0a'); // Shadow State Rest
     stateIndicator.textContent='OVERTIME DETECTED'; stateIndicator.style.color='#ff4545';
-    ha.textContent='TAP HARIZON TO TRANSITION';
+    lblA.style.color='#ff4545'; lblB.style.color='#3c2520';
+    ha.textContent='TAP HORIZON TO ENTER REST TIMELINE';
 
   } else if(S==='b_run'){
-    fdaView.style.display='none'; fdbView.style.display='flex'; ovd.style.display='none';
+    fdaView.style.display='flex'; ovd.style.display='none';
+    fdA.color('#242e38'); fdA.card('#080c0f'); // Shadow State Focus
     fdB.color('#82ccff'); fdB.card('#0a1117');
-    stateIndicator.textContent='REST SEQUENCE'; stateIndicator.style.color='#82ccff';
-    ha.textContent='';
+    stateIndicator.textContent='REST SEQUENCE ACTIVE'; stateIndicator.style.color='#82ccff';
+    lblA.style.color='#1b2630'; lblB.style.color='#82ccff';
+    ha.textContent='TAP CONSOLE WINDOW TO ACCELERATE RETURN';
 
   } else if(S==='b_done'){
-    fdaView.style.display='none'; fdbView.style.display='flex'; ovd.style.display='none';
+    fdaView.style.display='flex'; ovd.style.display='none';
+    fdA.color('#1e242c'); fdA.card('#06090c'); // Shadow State Focus
     fdB.color('#223f54'); fdB.card('#060a0f');
     stateIndicator.textContent='REST CYCLE EXPIRED'; stateIndicator.style.color='var(--text-soft)';
-    ha.textContent=(sess>0&&sess%4===0)?'CONSIDER EXTENDED BREAK':'TAP TO RE-ENTER FOCUS';
+    lblA.style.color='var(--text-dark)'; lblB.style.color='var(--text-soft)';
+    ha.textContent=(sess>0&&sess%4===0)?'CONSIDER EXTENDED BREAK SEQUENCE':'TAP WINDOW TO RE-ENTER FOCUS SEQUENCE';
   }
 
   const s4=(sess%4===0&&sess>0)?4:sess%4;
