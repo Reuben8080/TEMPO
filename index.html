@@ -474,8 +474,8 @@ function updateSndUI(){
 // ── SYSTOLIC HAPTIC API ──────────────────────────────
 const vibe=p=>{try{navigator.vibrate?.(p)}catch(e){}};
 const H={
-  tap:  ()=>vibe([30,20,50]),
-  run:  ()=>vibe([40,15,60]),
+  tap:   ()=>vibe([30,20,50]),
+  run:   ()=>vibe([40,15,60]),
   warn: ()=>vibe([30,30,30]),
   done: ()=>vibe([80,40,120]),
   bDone:()=>vibe([40,20,40,20,40]),
@@ -594,13 +594,13 @@ function initClock(isRecovery = false){
   }
   fdA.reset(); fdB.reset();
   fdA.update(aMs, false); fdB.update(bMs, false);
-  render();
   
   if (isRecovery && S !== 'idle' && S !== 'home') {
     homeEl.classList.add('gone');
     clkEl.classList.add('show');
     if (S === 'a_del' || S === 'a_run' || S === 'a_ov' || S === 'b_run') startTick();
   }
+  render();
 }
 
 $('sbtn').addEventListener('click',()=>{
@@ -615,7 +615,7 @@ $('clk-trigger').addEventListener('click', ()=>{
   } else if(S==='a_del'){
     S='a_run'; delMs=0; grabWake(); H.run();
   } else if(S==='a_run'){
-    incPend=false; gotoBreak(); H.tap(); // explicit manual jump clears earned break bonus
+    incPend=false; gotoBreak(); H.tap(); 
   } else if(S==='a_ov'){
     gotoBreak(); H.tap();
   } else if(S==='b_run'){
@@ -632,7 +632,6 @@ $('clk-trigger').addEventListener('click', ()=>{
 
 function gotoBreak(){
   stopTick();
-  // Preserve continuous counting matrix
   const baseBreak = incPend ? bMs + INC : bMs;
   bMs = Math.max(0, baseBreak - aOver);
   
@@ -644,7 +643,7 @@ function gotoBreak(){
 
 function gotoFocus(){
   stopTick();
-  if(aMs <= 0) aMs = aTotal; // only replenish full block if cycle was completed
+  if(aMs <= 0) aMs = aTotal; 
   aOver=0; warnFd=false; notifFd=false;
   fdA.reset(); fdA.update(aMs,false);
   S='a_del'; delMs=DELAY; startTick();
@@ -687,7 +686,7 @@ function tick(dt){
     } else fdB.update(bMs,true);
   }
   
-  if(Math.random() < 0.04) saveState(); // distribution throttle writing layers
+  if(Math.random() < 0.04) saveState(); 
   render();
 }
 
@@ -771,22 +770,19 @@ if('serviceWorker'in navigator){
   window.addEventListener('load',()=>{ navigator.serviceWorker.register('sw.js').catch(e=>console.warn(e)); });
 }
 
-document.addEventListener('visibilitychange',()=>{
-  if(document.hidden){
-    saveState(); lastT=null;
+// ── ARCHITECTURAL LIFE-CYCLE RESYNCHRONIZATION ────────────
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+    saveState();
+    stopTick();
   } else {
-    const raw = localStorage.getItem('tempo_engine_cache');
-    if (raw && ticker) {
-      try {
-        const data = JSON.parse(raw);
-        const deltaReal = Date.now() - data.savedAt;
-        if (S === 'a_run') aMs = Math.max(0, data.aMs - deltaReal);
-        if (S === 'b_run') bMs = Math.max(0, data.bMs - deltaReal);
-        if (S === 'a_ov')  aOver = data.aOver + deltaReal;
-        if (S === 'a_del') delMs = Math.max(0, data.delMs - deltaReal);
-      } catch(e){}
+    const recovered = loadState();
+    if (recovered && S !== 'home') {
+      initClock(true);
+    } else {
+      lastT = performance.now();
     }
-    lastT = performance.now();
+    render(); // Immediate layout recalculation on primary thread execution pass
   }
 });
 document.addEventListener('touchmove',e=>e.preventDefault(),{passive:false});
