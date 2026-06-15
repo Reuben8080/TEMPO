@@ -321,12 +321,15 @@ html,body{
   text-transform:uppercase;
 }
 .inc-badge {
-  font-size:11px;
-  font-weight:600;
+  font-size:12px;
+  font-weight:700;
   letter-spacing:0.15em;
-  color:#3888ae;
+  color:#82ccff;
   opacity:0;
-  transition:opacity 0.6s;
+  transition:opacity 0.4s;
+  background: rgba(16, 48, 69, 0.6);
+  padding: 6px 14px;
+  border-radius: 3px;
 }
 .inc-badge.show { opacity:1; }
 
@@ -746,6 +749,9 @@ function initClock(){
 $('clk-trigger').addEventListener('click', ()=>{
   if(S==='idle'){
     S='a_del'; delMs=DELAY; warnFd=false; startTick(); H.tap();
+  } else if(S==='a_del'){
+    // impatient tap during countdown — just skip straight to running
+    S='a_run'; delMs=0; grabWake(); H.run();
   } else if(S==='a_run'){
     incPend=false; gotoBreak(); H.tap();
   } else if(S==='a_ov'){
@@ -771,7 +777,8 @@ function gotoBreak(){
 }
 function gotoFocus(){
   stopTick();
-  aMs=aTotal; aOver=0; warnFd=false; incPend=false; notifFd=false;
+  aMs=aTotal; aOver=0; warnFd=false; notifFd=false;
+  // preserve incPend — if user earned bonus break but exited early, carry it to next break
   fdA.reset(); fdA.update(aMs,false);
   S='a_del'; delMs=DELAY; startTick();
 }
@@ -787,9 +794,9 @@ function stopTick(){if(ticker){clearInterval(ticker);ticker=null}dropWake()}
 
 function tick(dt){
   if(S==='a_del'){
-    const ps=Math.ceil(delMs/1000); delMs-=dt; const cs=Math.ceil(delMs/1000);
+    const ps=Math.ceil(delMs/1000); delMs-=dt; const cs=Math.ceil(Math.max(0,delMs)/1000);
     if(cs<ps&&cs>0) H.tick();
-    if(delMs<=0){S='a_run';delMs=0;grabWake();H.run()}
+    if(delMs<=0){S='a_run';delMs=0;grabWake();H.run();render();return}
   } else if(S==='a_run'){
     aMs-=dt;
     if(!warnFd&&aMs<=WARN_MS&&aMs>0){warnFd=true;H.warn()}
@@ -832,7 +839,7 @@ function render(){
     fdaView.style.display='flex'; fdbView.style.display='none'; ovd.style.display='none'; ovRest.style.display='none';
     fdA.color('#ffbe85'); fdA.card('#0f0e0d');
     stateIndicator.textContent='FOCUS'; stateIndicator.style.color='var(--gold)';
-    ha.textContent='TAP TO END EARLY';
+    ha.textContent='TAP TO TAKE DOWNTIME';
 
   } else if(S==='a_ov'){
     fdaView.style.display='none'; fdbView.style.display='none'; ovd.style.display='block'; ovRest.style.display='block';
@@ -844,7 +851,7 @@ function render(){
     const rm=Math.floor(rs/60), rsc=rs%60;
     ovRest.textContent='BREAK '+String(rm).padStart(2,'0')+':'+String(rsc).padStart(2,'0')+' REMAINING';
     stateIndicator.textContent='OVERTIME'; stateIndicator.style.color='#ff4545';
-    ha.textContent='TAP TO START BREAK';
+    ha.textContent='TAP ANYWHERE TO START BREAK';
 
   } else if(S==='b_run'){
     fdaView.style.display='none'; fdbView.style.display='flex'; ovd.style.display='none'; ovRest.style.display='none';
@@ -866,15 +873,25 @@ function render(){
 
 function showInc(){
   incBadge.classList.add('show');
-  clearTimeout(incTO); incTO=setTimeout(()=>incBadge.classList.remove('show'),3500);
+  clearTimeout(incTO); incTO=setTimeout(()=>incBadge.classList.remove('show'),5000);
 }
 
 function doExit(){
   stopTick();
+  clearTimeout(incTO);
+  S='home';
+  sess=0; incPend=false; warnFd=false; notifFd=false;
+  aOver=0; delMs=DELAY;
   clkEl.classList.remove('show');
   homeEl.classList.remove('gone');
-  canvasEl.setAttribute('data-state', 'idle');
+  canvasEl.setAttribute('data-state','idle');
+  incBadge.classList.remove('show');
   fdA.reset(); fdB.reset();
+  // reset session counter display
+  sessCtr.textContent='0 / 4 sessions';
+  sessCtr.style.color='var(--text-dark)';
+  stateIndicator.textContent='READY';
+  stateIndicator.style.color='var(--text-soft)';
 }
 
 if('serviceWorker'in navigator){
@@ -882,7 +899,13 @@ if('serviceWorker'in navigator){
 }
 
 document.addEventListener('visibilitychange',()=>{
-  if(document.hidden) lastT=null; else if(ticker) lastT=performance.now();
+  if(document.hidden){
+    lastT=null;
+  } else {
+    // Only resume tick reference if we're in a state that should be counting
+    // For a_ov (overtime), don't silently add hidden time — reset reference
+    if(ticker) lastT=performance.now();
+  }
 });
 document.addEventListener('touchmove',e=>e.preventDefault(),{passive:false});
 </script>
