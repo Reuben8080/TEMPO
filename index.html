@@ -26,7 +26,9 @@
   --text-dark: #383430;
   --gold: #c2a67e;
   
-  /* Engine Flip Tokens default */
+  /* Engine Flip Tokens */
+  --fw:62px;--fh:88px;--ffs:76px;
+  --ftop:6px;--fbot:-38px;
   --frad:4px;--fc:#0f0e0d;--fd:#e8e5e0;
 }
 
@@ -49,10 +51,10 @@ html,body{
   transition:background 1.6s cubic-bezier(0.25, 1, 0.5, 1);
   display:flex;
   flex-direction:column;
-  justify-content:between;
-  padding:24px 20px;
-  padding-bottom:max(24px, env(safe-area-inset-bottom));
-  padding-top:max(24px, env(safe-area-inset-top));
+  justify-content:space-between;
+  padding:32px;
+  padding-bottom:max(32px, env(safe-area-inset-bottom));
+  padding-top:max(32px, env(safe-area-inset-top));
 }
 
 /* Sound State Map Glows */
@@ -67,13 +69,14 @@ html,body{
 .canvas[data-state="b_run"] { --ambient-glow: radial-gradient(circle at 50% 60%, rgba(16, 48, 69, 0.35) 0%, rgba(3, 5, 8, 0) 70%); }
 
 /* ═══════════════════════════════════════════
-   FLIP ENGINE RESPONSIVE MATRIX
+   FLIP ENGINE COMPONENTS (Sleekened/Integrated)
 ═══════════════════════════════════════════ */
-.flip-row{display:flex;align-items:center;gap:3px}
+.flip-row{display:flex;align-items:center;gap:4px}
 .flip-sep{
   font-family:var(--mono);font-weight:400;
-  line-height:1; color:var(--text-dark);transition:color .8s;
-  padding-bottom:6px;
+  font-size:calc(var(--ffs) * 0.9);line-height:1;
+  color:var(--text-dark);transition:color .8s;
+  padding-bottom:10px;
 }
 .fu{
   position:relative;
@@ -128,31 +131,14 @@ html,body{
 @keyframes fUp{from{transform:rotateX(0)}    to{transform:rotateX(-90deg)}}
 @keyframes fDn{from{transform:rotateX(90deg)}to{transform:rotateX(0)}}
 
-/* Context Sizing Rules via Clean CSS Variable Scaling */
-#home .fu, #clk .fu { --fw:32px; --fh:46px; --ffs:38px; --ftop:3px; --fbot:-31px; }
-#home .flip-sep, #clk .flip-sep { font-size: 38px; }
-
-@media(min-width:375px) {
-  #home .fu, #clk .fu { --fw:35px; --fh:50px; --ffs:42px; --ftop:3px; --fbot:-34px; }
-  #home .flip-sep, #clk .flip-sep { font-size: 42px; }
-}
-
-@media(min-width:768px){
-  #home .fu { --fw: 46px; --fh: 66px; --ffs: 56px; --ftop: 5px; --fbot:-45px; }
-  #home .flip-sep { font-size: 56px; }
-  #clk .fu { --fw: 58px; --fh: 82px; --ffs: 70px; --ftop: 6px; --fbot:-54px; }
-  #clk .flip-sep { font-size: 70px; }
-}
-
 /* ═══════════════════════════════════════════
    THE LUXURY MONOGRAPH HOME
 ═══════════════════════════════════════════ */
-#home, #clk {
-  position:absolute;inset:0;
+#home {
+  position:absolute;inset:32px;
   display:flex;
   flex-direction:column;
   justify-content:space-between;
-  height:100%;
   transition:opacity .6s cubic-bezier(0.25, 1, 0.5, 1), transform .6s cubic-bezier(0.25, 1, 0.5, 1);
 }
 #home.gone{opacity:0;transform:translateY(-8px);pointer-events:none}
@@ -178,36 +164,35 @@ html,body{
 }
 #h-snd.on { color:var(--gold); }
 
-/* Absolute Fluid Centerpiece */
+/* Absolute Typographic Centerpiece */
 .h-hero {
   align-self:center;
   text-align:center;
-  margin:2vh 0;
-  width:100%;
+  margin-top:-20px;
 }
 #h-pname {
   font-family:var(--serif);
-  font-size:clamp(38px, 7vh, 54px);
+  font-size:54px;
   font-weight:400;
   letter-spacing:0.04em;
   color:var(--text-bright);
-  margin-bottom:2vh;
+  margin-bottom:32px;
 }
 .h-intervals {
   display:flex;
   align-items:center;
   justify-content:center;
-  gap:4vw;
+  gap:40px;
 }
 .h-int-group {
   display:flex;
   flex-direction:column;
   align-items:center;
-  gap:10px;
+  gap:16px;
 }
 .h-label {
-  font-size:9px;
-  font-weight:700;
+  font-size:10px;
+  font-weight:600;
   letter-spacing:0.25em;
   color:var(--text-dark);
 }
@@ -216,19 +201,19 @@ html,body{
   font-style:italic;
   font-size:20px;
   color:var(--text-dark);
-  margin-top:16px;
+  margin-top:24px;
 }
 
 /* Typographic Continuous Index Selectors */
 .h-bottom {
   display:flex;
   flex-direction:column;
-  gap:2vh;
+  gap:32px;
 }
 .h-spectrum-wrapper {
   display:flex;
   flex-direction:column;
-  gap:10px;
+  gap:12px;
   align-items:center;
 }
 .h-spectrum-title {
@@ -240,12 +225,12 @@ html,body{
 .h-spectrum {
   display:flex;
   justify-content:center;
-  gap:18px;
+  gap:24px;
   width:100%;
 }
 .spec-item {
-  font-size:11px;
-  font-weight:600;
+  font-size:12px;
+  font-weight:500;
   letter-spacing:0.15em;
   color:var(--text-dark);
   cursor:pointer;
@@ -259,21 +244,25 @@ html,body{
   font-family:var(--sans);
   background:none;
   border:none;
-  font-size:12px;
-  font-weight:700;
+  font-size:13px;
+  font-weight:600;
   letter-spacing:0.3em;
   color:var(--gold);
   cursor:pointer;
-  padding:12px;
+  padding:16px;
   align-self:center;
   transition:opacity 0.2s, transform 0.2s;
 }
 #sbtn:active { transform:scale(0.98); opacity:0.8; }
 
 /* ═══════════════════════════════════════════
-   THE ACTIVE HORIZON SCREEN (Side-by-Side Dual Engine)
+   THE ACTIVE HORIZON SCREEN
 ═══════════════════════════════════════════ */
 #clk {
+  position:absolute;inset:32px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
   opacity:0;pointer-events:none;
   transition:opacity .8s ease, transform .8s ease;
   transform:translateY(12px);
@@ -286,8 +275,8 @@ html,body{
   align-items:baseline;
 }
 .c-state-lbl {
-  font-size:10px;
-  font-weight:700;
+  font-size:11px;
+  font-weight:600;
   letter-spacing:0.25em;
   color:var(--text-soft);
   transition:color 0.5s;
@@ -305,64 +294,27 @@ html,body{
   flex-direction:column;
   align-items:center;
   justify-content:center;
-  gap:16px;
-  width:100%;
+  gap:20px;
 }
-.c-clocks-container {
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:4vw;
-  width:100%;
-}
-.c-clock-wrapper {
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:10px;
-  transition:opacity 0.5s ease;
-}
-.c-mini-label {
-  font-size:9px;
-  font-weight:700;
-  letter-spacing:0.2em;
-  transition:color 0.5s ease;
-}
-.c-clock-wrapper.active .c-mini-label { color:var(--text-bright); }
-.c-clock-wrapper.dimmed .c-mini-label { color:var(--text-dark); }
-
-.c-clock-divider {
-  font-family:var(--serif);
-  font-style:italic;
-  font-size:20px;
-  color:var(--text-dark);
-  margin-top:18px;
-}
-
 .ov-ctr {
   font-family:var(--mono);
-  font-weight:700;
-  font-size:clamp(24px, 4vh, 32px);
-  letter-spacing:0.05em;
+  font-weight:400;
+  font-size:clamp(54px, 12vw, 84px);
+  letter-spacing:-0.03em;
   color:#ff4545;
   display:none;
   line-height:1;
-  margin-top:4px;
 }
 .c-hint {
-  font-size:10px;
-  font-weight:500;
-  letter-spacing:0.15em;
-  color:var(--text-soft);
+  font-size:11px;
+  letter-spacing:0.2em;
+  color:var(--text-dark);
   min-height:14px;
   text-transform:uppercase;
-  text-align:center;
 }
 .inc-badge {
-  position:absolute;
-  top:15%;
-  font-size:10px;
-  font-weight:700;
+  font-size:11px;
+  font-weight:600;
   letter-spacing:0.15em;
   color:#3888ae;
   opacity:0;
@@ -389,10 +341,56 @@ html,body{
   color:var(--text-soft); cursor:pointer;
 }
 
-/* Desktop Polish Optimization */
+/* Adaptive Space Scaling */
 @media(min-width:768px){
-  .canvas { padding:40px; }
-  #home, #clk { max-width:520px; margin:0 auto; }
+  .canvas { padding:48px; }
+  #home, #clk { inset:48px; }
+  #home { max-width:520px; margin:0 auto; }
+  #clk { max-width:600px; margin:0 auto; }
+  #h-pname { font-size:64px; }
+}
+
+/* ── MOBILE CLIPPING FIXES ───────────────────────────── */
+@media(max-width:480px){
+  /* Scale down active clock flip digits */
+  :root {
+    --fw:44px; --fh:64px; --ffs:54px;
+    --ftop:4px; --fbot:-27px;
+  }
+  /* Clamp home title so it never overflows */
+  #h-pname {
+    font-size: clamp(32px, 9vw, 54px);
+    margin-bottom: 20px;
+  }
+  /* Remove negative margin that causes overlap on short screens */
+  .h-hero {
+    margin-top: 0;
+  }
+  /* Tighten interval gap for narrow viewports */
+  .h-intervals {
+    gap: 20px;
+  }
+  /* Reduce canvas padding so content has more room */
+  .canvas {
+    padding: 20px;
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
+    padding-top: max(20px, env(safe-area-inset-top));
+  }
+  #home, #clk {
+    inset: 20px;
+  }
+  /* Tighten bottom section gap */
+  .h-bottom {
+    gap: 20px;
+  }
+  /* Shrink spectrum item text slightly */
+  .spec-item {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+  }
+  .h-spectrum {
+    gap: 16px;
+  }
 }
 </style>
 </head>
@@ -437,17 +435,8 @@ html,body{
     </header>
 
     <main class="c-main" id="clk-trigger">
-      <div class="c-clocks-container" id="clocks-cont">
-        <div class="c-clock-wrapper" id="wrap-a">
-          <span class="c-mini-label">FOCUS</span>
-          <div class="flip-row" id="fda"></div>
-        </div>
-        <div class="c-clock-divider">/</div>
-        <div class="c-clock-wrapper" id="wrap-b">
-          <span class="c-mini-label">REST</span>
-          <div class="flip-row" id="fdb"></div>
-        </div>
-      </div>
+      <div class="flip-row" id="fda"></div>
+      <div class="flip-row" id="fdb" style="display:none;"></div>
       <div class="ov-ctr" id="ovd"></div>
       <div class="c-hint" id="ha"></div>
       <div class="inc-badge" id="inc-b">+2:00 METRIC</div>
@@ -539,7 +528,15 @@ class FlipDisplay{
   color(c){this.d.forEach(d=>d.color(c));this.sep.style.color=c}
   card(c){this.d.forEach(d=>d.card(c))}
   size(fw,fh,ffs){
-    // Sizing completely updated to drop rigid inline style injections in favor of pure responsive CSS Media queries.
+    const tp=((fh/2)-(ffs/2))+'px', bt=(-(ffs/2))+'px';
+    this.d.forEach(d=>{
+      d.el.style.setProperty('--fw',fw+'px');
+      d.el.style.setProperty('--fh',fh+'px');
+      d.el.style.setProperty('--ffs',ffs+'px');
+      d.el.style.setProperty('--ftop',tp);
+      d.el.style.setProperty('--fbot',bt);
+    });
+    this.sep.style.fontSize=ffs+'px';
   }
   reset(){this.d.forEach(d=>{d.cur=null});this._ls=-1}
 }
@@ -549,6 +546,11 @@ const hA =new FlipDisplay('h-fda');
 const hB =new FlipDisplay('h-fdb');
 const fdA=new FlipDisplay('fda');
 const fdB=new FlipDisplay('fdb');
+const isMobile = window.innerWidth <= 480;
+hA.size(isMobile?28:38, isMobile?40:54, isMobile?34:46);
+hB.size(isMobile?28:38, isMobile?40:54, isMobile?34:46);
+fdA.size(isMobile?44:68, isMobile?64:96, isMobile?54:82);
+fdB.size(isMobile?44:68, isMobile?64:96, isMobile?54:82);
 
 // ── AUDIO LANDSCAPE ENGINE ───────────────────────────
 class AmbientEngine{
@@ -691,6 +693,7 @@ const $=id=>document.getElementById(id);
 const canvasEl=$('canvas'), homeEl=$('home'), clkEl=$('clk');
 const stateIndicator=$('c-state-indicator'), sessCtr=$('sess-ctr'), ha=$('ha');
 const ovd=$('ovd'), incBadge=$('inc-b'), hPname=$('h-pname');
+const fdaView=$('fda'), fdbView=$('fdb');
 
 // ── BUILD TYPOGRAPHIC SPECTRUM INDEX ─────────────────
 PRESETS.forEach((p,i)=>{
@@ -802,65 +805,43 @@ function tick(dt){
 // ── PREMIUM CONTEXTUAL RENDER ────────────────────────
 function render(){
   canvasEl.setAttribute('data-state', S);
-  
-  const wrapA = $('wrap-a');
-  const wrapB = $('wrap-b');
 
   if(S==='idle'){
-    wrapA.classList.remove('dimmed'); wrapA.classList.add('active');
-    wrapB.classList.remove('dimmed'); wrapB.classList.add('active');
-    ovd.style.display='none';
-    fdA.color('#8a847c'); fdA.card('#0f0e0d');
-    fdB.color('#544e46'); fdB.card('#0f0e0d');
+    fdaView.style.display='flex'; fdbView.style.display='none'; ovd.style.display='none';
+    fdA.color('#544e46'); fdA.card('#0f0e0d');
     stateIndicator.textContent='SEQUENCE READY'; stateIndicator.style.color='var(--text-soft)';
-    ha.textContent='TAP TO INITIATE SEQUENCE';
+    ha.textContent='TAP TO INITIATE TRACK';
 
   } else if(S==='a_del'){
-    wrapA.classList.add('active'); wrapA.classList.remove('dimmed');
-    wrapB.classList.remove('active'); wrapB.classList.add('dimmed');
-    ovd.style.display='none';
+    fdaView.style.display='flex'; fdbView.style.display='none'; ovd.style.display='none';
     fdA.color('#e8e5e0'); fdA.card('#171513');
-    fdB.color('#221f1c'); fdB.card('#080706');
     stateIndicator.textContent='SEQUENCE FOCUS'; stateIndicator.style.color='var(--text-bright)';
-    ha.textContent='CALIBRATING TRACK IN '+Math.max(1,Math.ceil(delMs/1000));
+    ha.textContent='CALIBRATING ENGINE IN '+Math.max(1,Math.ceil(delMs/1000));
 
   } else if(S==='a_run'){
-    wrapA.classList.add('active'); wrapA.classList.remove('dimmed');
-    wrapB.classList.remove('active'); wrapB.classList.add('dimmed');
-    ovd.style.display='none';
+    fdaView.style.display='flex'; fdbView.style.display='none'; ovd.style.display='none';
     fdA.color('#ffbe85'); fdA.card('#0f0e0d');
-    fdB.color('#2b2620'); fdB.card('#050403');
     stateIndicator.textContent='FOCUSING ENVIRONMENT'; stateIndicator.style.color='var(--gold)';
-    ha.textContent='FOCUSING ACTIVE · TAP ANYWHERE TO SKIP';
+    ha.textContent='';
 
   } else if(S==='a_ov'){
-    wrapA.classList.remove('active'); wrapA.classList.add('dimmed');
-    wrapB.classList.remove('active'); wrapB.classList.add('dimmed');
-    ovd.style.display='block';
+    fdaView.style.display='none'; fdbView.style.display='none'; ovd.style.display='block';
     const os=Math.floor(aOver/1000);
     ovd.textContent='+'+String(Math.floor(os/60)).padStart(2,'0')+':'+String(os%60).padStart(2,'0');
-    fdA.color('#521010'); fdA.card('#0f0e0d');
-    fdB.color('#383430'); fdB.card('#050403');
     stateIndicator.textContent='OVERTIME DETECTED'; stateIndicator.style.color='#ff4545';
-    ha.textContent='FOCUS EXCEEDED · TAP TO START REST';
+    ha.textContent='TAP HARIZON TO TRANSITION';
 
   } else if(S==='b_run'){
-    wrapA.classList.remove('active'); wrapA.classList.add('dimmed');
-    wrapB.classList.add('active'); wrapB.classList.remove('dimmed');
-    ovd.style.display='none';
-    fdA.color('#262320'); fdA.card('#050403');
+    fdaView.style.display='none'; fdbView.style.display='flex'; ovd.style.display='none';
     fdB.color('#82ccff'); fdB.card('#0a1117');
     stateIndicator.textContent='REST SEQUENCE'; stateIndicator.style.color='#82ccff';
-    ha.textContent='REST PERIOD ACTIVE · COOLING DOWN';
+    ha.textContent='';
 
   } else if(S==='b_done'){
-    wrapA.classList.remove('active'); wrapA.classList.add('dimmed');
-    wrapB.classList.add('active'); wrapB.classList.remove('dimmed');
-    ovd.style.display='none';
-    fdA.color('#262320'); fdA.card('#050403');
+    fdaView.style.display='none'; fdbView.style.display='flex'; ovd.style.display='none';
     fdB.color('#223f54'); fdB.card('#060a0f');
     stateIndicator.textContent='REST CYCLE EXPIRED'; stateIndicator.style.color='var(--text-soft)';
-    ha.textContent=(sess>0&&sess%4===0)?'CONSIDER EXTENDED BREAK · TAP TO RESTART':'CYCLE DONE · TAP TO START R2';
+    ha.textContent=(sess>0&&sess%4===0)?'CONSIDER EXTENDED BREAK':'TAP TO RE-ENTER FOCUS';
   }
 
   const s4=(sess%4===0&&sess>0)?4:sess%4;
