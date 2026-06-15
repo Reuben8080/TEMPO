@@ -287,6 +287,14 @@ html,body{
   letter-spacing:0.1em;
   color:var(--text-dark);
 }
+.ov-rest-hint {
+  font-size:11px;
+  letter-spacing:0.15em;
+  color:var(--text-dark);
+  font-family:var(--mono);
+  margin-top:4px;
+  transition:opacity 0.4s;
+}
 
 .c-main {
   flex:1;
@@ -431,15 +439,16 @@ html,body{
   <div id="clk">
     <header class="c-top">
       <span class="c-state-lbl" id="c-state-indicator">FOCUS</span>
-      <span id="sess-ctr">0 / 4</span>
+      <span id="sess-ctr" title="Sessions until long break">0 / 4 sessions</span>
     </header>
 
     <main class="c-main" id="clk-trigger">
       <div class="flip-row" id="fda"></div>
       <div class="flip-row" id="fdb" style="display:none;"></div>
       <div class="ov-ctr" id="ovd"></div>
+      <div class="ov-rest-hint" id="ov-rest" style="display:none"></div>
       <div class="c-hint" id="ha"></div>
-      <div class="inc-badge" id="inc-b">+2:00 METRIC</div>
+      <div class="inc-badge" id="inc-b">+2:00 added to break</div>
     </main>
 
     <footer class="c-bottom">
@@ -786,7 +795,7 @@ function tick(dt){
     if(!warnFd&&aMs<=WARN_MS&&aMs>0){warnFd=true;H.warn()}
     if(aMs<=0){
       aMs=0; aOver=0; incPend=true; sess++; S='a_ov'; H.done();
-      notify('Focus complete','Interval processing complete.');
+      notify('Focus complete','Time for a break.');
     } else fdA.update(aMs,true);
   } else if(S==='a_ov'){
     aOver+=dt;
@@ -796,56 +805,62 @@ function tick(dt){
     if(!warnFd&&bMs<=WARN_MS&&bMs>0){warnFd=true;H.warn()}
     if(bMs<=0){
       bMs=0; S='b_done'; fdB.update(0,false); stopTick(); H.bDone();
-      notify('Break over','Ready to re-enter sequence.');
+      notify('Break over','Ready to focus again.');
     } else fdB.update(bMs,true);
   }
   render();
 }
 
 // ── PREMIUM CONTEXTUAL RENDER ────────────────────────
+const ovRest=document.getElementById('ov-rest');
 function render(){
   canvasEl.setAttribute('data-state', S);
 
   if(S==='idle'){
-    fdaView.style.display='flex'; fdbView.style.display='none'; ovd.style.display='none';
+    fdaView.style.display='flex'; fdbView.style.display='none'; ovd.style.display='none'; ovRest.style.display='none';
     fdA.color('#544e46'); fdA.card('#0f0e0d');
-    stateIndicator.textContent='SEQUENCE READY'; stateIndicator.style.color='var(--text-soft)';
-    ha.textContent='TAP TO INITIATE TRACK';
+    stateIndicator.textContent='READY'; stateIndicator.style.color='var(--text-soft)';
+    ha.textContent='TAP TO START';
 
   } else if(S==='a_del'){
-    fdaView.style.display='flex'; fdbView.style.display='none'; ovd.style.display='none';
+    fdaView.style.display='flex'; fdbView.style.display='none'; ovd.style.display='none'; ovRest.style.display='none';
     fdA.color('#e8e5e0'); fdA.card('#171513');
-    stateIndicator.textContent='SEQUENCE FOCUS'; stateIndicator.style.color='var(--text-bright)';
-    ha.textContent='CALIBRATING ENGINE IN '+Math.max(1,Math.ceil(delMs/1000));
+    stateIndicator.textContent='FOCUS'; stateIndicator.style.color='var(--text-bright)';
+    ha.textContent='STARTING IN '+Math.max(1,Math.ceil(delMs/1000));
 
   } else if(S==='a_run'){
-    fdaView.style.display='flex'; fdbView.style.display='none'; ovd.style.display='none';
+    fdaView.style.display='flex'; fdbView.style.display='none'; ovd.style.display='none'; ovRest.style.display='none';
     fdA.color('#ffbe85'); fdA.card('#0f0e0d');
-    stateIndicator.textContent='FOCUSING ENVIRONMENT'; stateIndicator.style.color='var(--gold)';
-    ha.textContent='';
+    stateIndicator.textContent='FOCUS'; stateIndicator.style.color='var(--gold)';
+    ha.textContent='TAP TO END EARLY';
 
   } else if(S==='a_ov'){
-    fdaView.style.display='none'; fdbView.style.display='none'; ovd.style.display='block';
+    fdaView.style.display='none'; fdbView.style.display='none'; ovd.style.display='block'; ovRest.style.display='block';
     const os=Math.floor(aOver/1000);
     ovd.textContent='+'+String(Math.floor(os/60)).padStart(2,'0')+':'+String(os%60).padStart(2,'0');
-    stateIndicator.textContent='OVERTIME DETECTED'; stateIndicator.style.color='#ff4545';
-    ha.textContent='TAP HARIZON TO TRANSITION';
+    // Show how much break time remains after overtime eats into it
+    const restLeft=Math.max(0, bTotal - aOver);
+    const rs=Math.ceil(restLeft/1000);
+    const rm=Math.floor(rs/60), rsc=rs%60;
+    ovRest.textContent='BREAK '+String(rm).padStart(2,'0')+':'+String(rsc).padStart(2,'0')+' REMAINING';
+    stateIndicator.textContent='OVERTIME'; stateIndicator.style.color='#ff4545';
+    ha.textContent='TAP TO START BREAK';
 
   } else if(S==='b_run'){
-    fdaView.style.display='none'; fdbView.style.display='flex'; ovd.style.display='none';
+    fdaView.style.display='none'; fdbView.style.display='flex'; ovd.style.display='none'; ovRest.style.display='none';
     fdB.color('#82ccff'); fdB.card('#0a1117');
-    stateIndicator.textContent='REST SEQUENCE'; stateIndicator.style.color='#82ccff';
-    ha.textContent='';
+    stateIndicator.textContent='BREAK'; stateIndicator.style.color='#82ccff';
+    ha.textContent='TAP TO END BREAK EARLY';
 
   } else if(S==='b_done'){
-    fdaView.style.display='none'; fdbView.style.display='flex'; ovd.style.display='none';
+    fdaView.style.display='none'; fdbView.style.display='flex'; ovd.style.display='none'; ovRest.style.display='none';
     fdB.color('#223f54'); fdB.card('#060a0f');
-    stateIndicator.textContent='REST CYCLE EXPIRED'; stateIndicator.style.color='var(--text-soft)';
-    ha.textContent=(sess>0&&sess%4===0)?'CONSIDER EXTENDED BREAK':'TAP TO RE-ENTER FOCUS';
+    stateIndicator.textContent='BREAK OVER'; stateIndicator.style.color='var(--text-soft)';
+    ha.textContent=(sess>0&&sess%4===0)?'TAKE A LONG BREAK NOW':'TAP TO FOCUS AGAIN';
   }
 
   const s4=(sess%4===0&&sess>0)?4:sess%4;
-  sessCtr.textContent=`${s4} / 4`;
+  sessCtr.textContent=`${s4} / 4 sessions`;
   sessCtr.style.color=(sess>0&&sess%4===0)?'#82ccff':'var(--text-dark)';
 }
 
