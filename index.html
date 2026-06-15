@@ -131,6 +131,11 @@ html,body{
 @keyframes fUp{from{transform:rotateX(0)}    to{transform:rotateX(-90deg)}}
 @keyframes fDn{from{transform:rotateX(90deg)}to{transform:rotateX(0)}}
 
+@keyframes sessFlash{0%{color:var(--gold)}100%{color:var(--text-dark)}}
+#sess-ctr.flash{animation:sessFlash 1.2s ease-out forwards}
+@keyframes bdPulse{0%,100%{opacity:1}50%{opacity:0.25}}
+#clk.b-done #c-state-indicator{animation:bdPulse 2.2s ease-in-out infinite}
+
 /* Scoped Dimensions for Small Home Preview Grids */
 .h-intervals {
   --fw: 38px; --fh: 54px; --ffs: 46px;
@@ -150,7 +155,7 @@ html,body{
 
 .h-top { display:flex; justify-content:space-between; align-items:baseline; }
 .h-brand { font-family:var(--serif); font-size:24px; letter-spacing:0.02em; color:var(--text-bright); }
-#h-snd { font-size:11px; font-weight:500; letter-spacing:0.2em; color:var(--text-soft); cursor:pointer; transition:color 0.3s; }
+#h-snd { font-size:11px; font-weight:500; letter-spacing:0.2em; color:var(--text-soft); cursor:pointer; transition:color 0.3s; padding:12px; margin:-12px; }
 #h-snd.on { color:var(--gold); }
 
 .h-hero { align-self:center; text-align:center; margin-top:-20px; }
@@ -191,9 +196,17 @@ html,body{
 .inc-badge.show { opacity:1; }
 
 .c-bottom { display:flex; justify-content:space-between; align-items:center; }
-#clk-snd { font-size:11px; font-weight:500; letter-spacing:0.2em; color:var(--text-dark); cursor:pointer; }
+#clk-snd { font-size:11px; font-weight:500; letter-spacing:0.2em; color:var(--text-dark); cursor:pointer; padding:12px; margin:-12px; }
 #clk-snd.on { color:var(--gold); }
-#exit-btn { background:none; border:none; font-size:11px; font-weight:500; letter-spacing:0.2em; color:var(--text-soft); cursor:pointer; }
+#exit-btn { background:none; border:none; font-size:11px; font-weight:500; letter-spacing:0.2em; color:var(--text-soft); cursor:pointer; position:relative; padding-bottom:4px; }
+#exit-btn::after {
+  content:''; position:absolute; bottom:0; left:0;
+  height:1px; width:0; background:var(--text-soft);
+  transition:none;
+}
+#exit-btn.holding::after {
+  width:100%; transition:width 1.4s linear;
+}
 
 /* Desktop Frame Normalization */
 @media(min-width:768px){
@@ -203,7 +216,26 @@ html,body{
   #h-pname { font-size:64px; }
 }
 
-/* ── NATIVE RESPONSIVE LAYOUT SCALING ────────────────── */
+/* ── PROGRESS THREAD ──────────────────────────────── */
+#prog-thread {
+  position: fixed;
+  bottom: 0; left: 0;
+  width: 100%;
+  height: 2px;                       /* mobile: 2px for glanceability */
+  transform-origin: left center;
+  transform: scaleX(0);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 10;
+  will-change: transform;
+  transition: transform 85ms linear, opacity 0.5s ease;
+}
+@media(min-width: 768px){
+  #prog-thread { height: 1px; }      /* desktop/tablet: hairline */
+}
+@media(orientation: landscape) and (max-width: 767px){
+  #prog-thread { height: 2px; }      /* landscape mobile: keep 2px */
+}
 @media(max-width:480px){
   :root {
     --fw: 44px; --fh: 64px; --ffs: 54px;
@@ -254,13 +286,13 @@ html,body{
         <span class="h-spectrum-title">INTERVAL INDEX</span>
         <div class="h-spectrum" id="h-pills"></div>
       </div>
-      <button id="sbtn">ENTER INTERVAL</button>
+      <button id="sbtn">BEGIN SESSION</button>
     </footer>
   </div>
 
   <div id="clk">
     <header class="c-top">
-      <span class="c-state-lbl" id="c-state-indicator">FOCUS</span>
+      <span class="c-state-lbl" id="c-state-indicator" aria-live="polite">FOCUS</span>
       <span id="sess-ctr" title="Sessions until long break">0 / 4 sessions</span>
     </header>
 
@@ -269,15 +301,16 @@ html,body{
       <div class="flip-row" id="fdb" style="display:none;"></div>
       <div class="ov-ctr" id="ovd"></div>
       <div class="ov-rest-hint" id="ov-rest" style="display:none"></div>
-      <div class="c-hint" id="ha"></div>
+      <div class="c-hint" id="ha" aria-live="assertive"></div>
       <div class="inc-badge" id="inc-b">+2:00 added to break</div>
     </main>
 
     <footer class="c-bottom">
       <div id="clk-snd" onclick="cycleSnd(event)">· OFF</div>
-      <button id="exit-btn" onclick="doExit()">DISMISS ×</button>
+      <button id="exit-btn">DISMISS ×</button>
     </footer>
   </div>
+  <div id="prog-thread"></div>
 
 </div>
 
@@ -290,7 +323,7 @@ const PRESETS=[
   {name:'ULTRADIAN', f:90, r:20},
 ];
 const DELAY=5000, WARN_MS=5000, INC=120000;
-const NOTIF_5MIN=5*60*1000;
+const NOTIF_5MIN=5*60*1000, ELAPSED_MS=10*60*1000;
 
 // ── MECHANICAL FLIP DIGIT SUBSYSTEM ──────────────────
 class FlipDigit{
@@ -307,7 +340,10 @@ class FlipDigit{
     this.sT=c[0].querySelector('span'); this.sB=c[1].querySelector('span');
     this.fT=c[2]; this.fB=c[3];
     this.fsT=c[2].querySelector('span'); this.fsB=c[3].querySelector('span');
-    this.cur=null; this._to=null;
+    this.cur=null; this._to=null; this._animId=0;
+    // Cache element lists to avoid repeated querySelectorAll on every render/color call
+    this._spans=Array.from(this.el.querySelectorAll('span'));
+    this._cards=Array.from(this.el.querySelectorAll('.fh,.flap'));
   }
   set(n,anim=true){
     const ns=String(n);
@@ -318,9 +354,13 @@ class FlipDigit{
       return;
     }
     this.sT.textContent=ns; this.fsT.textContent=prev; this.fsB.textContent=ns;
+    // Use data-attribute toggle instead of offsetWidth forced reflow to restart animation
     this.fT.classList.remove('go'); this.fB.classList.remove('go');
-    void this.fT.offsetWidth;
-    this.fT.classList.add('go'); this.fB.classList.add('go');
+    const id=++this._animId;
+    requestAnimationFrame(()=>{
+      if(id!==this._animId)return;
+      this.fT.classList.add('go'); this.fB.classList.add('go');
+    });
     clearTimeout(this._to);
     this._to=setTimeout(()=>{
       this.sB.textContent=ns;
@@ -329,11 +369,13 @@ class FlipDigit{
     },310);
   }
   color(c){
-    this.el.querySelectorAll('span').forEach(s=>s.style.color=c);
+    // Use cached spans — no live DOM query
+    this._spans.forEach(s=>s.style.color=c);
     this.el.style.setProperty('--fd',c);
   }
   card(c){
-    this.el.querySelectorAll('.fh,.flap').forEach(e=>e.style.backgroundColor=c);
+    // Use cached cards — no live DOM query
+    this._cards.forEach(e=>e.style.backgroundColor=c);
     this.el.style.setProperty('--fc',c);
   }
 }
@@ -419,7 +461,12 @@ class AmbientEngine{
   select(mode){
     this._init(); this.mode=mode;
     clearTimeout(this._swTO); this._fade(0,.3);
-    this._swTO=setTimeout(()=>{this._kill();this._build(mode)},350);
+    // Defer _kill + _build so the fade starts rendering before the CPU-heavy noise generation
+    this._swTO=setTimeout(()=>{
+      this._kill();
+      // Yield to the browser for one more frame before the blocking noise computation
+      setTimeout(()=>this._build(mode), 0);
+    },350);
     document.getElementById('canvas').setAttribute('data-sound', mode);
     updateSndUI();
   }
@@ -444,7 +491,7 @@ class AmbientEngine{
   _thunder(){
     if(this.mode!=='storm')return;
     this.tTO=setTimeout(()=>{
-      if(this.mode!=='storm')return;
+      if(this.mode!=='storm'||!this.ctx)return;
       const src=this._src(this._noise('white')), env=this._gain(0), lp=this._filt('lowpass',220);
       src.connect(lp); lp.connect(env); env.connect(this.out); this.nodes.push(src,lp,env); src.start();
       const t=this.ctx.currentTime; env.gain.setValueAtTime(0,t); env.gain.linearRampToValueAtTime(0.5,t+0.1); env.gain.exponentialRampToValueAtTime(0.001,t+5);
@@ -509,12 +556,13 @@ const canvasEl=$('canvas'), homeEl=$('home'), clkEl=$('clk');
 const stateIndicator=$('c-state-indicator'), sessCtr=$('sess-ctr'), ha=$('ha');
 const ovd=$('ovd'), incBadge=$('inc-b'), hPname=$('h-pname');
 const fdaView=$('fda'), fdbView=$('fdb');
+const progEl=$('prog-thread');
 
 // ── PERSISTENCE ENVELOPE CONTROLLER ──────────────────
 function saveState() {
   const cache = {
     S, pidx, aMs, bMs, aOver, delMs, sess, incPend,
-    aTotal, bTotal, savedAt: Date.now()
+    aTotal, bTotal, sndIdx, savedAt: Date.now()
   };
   localStorage.setItem('tempo_engine_cache', JSON.stringify(cache));
 }
@@ -531,6 +579,10 @@ function loadState() {
     incPend = data.incPend;
     aTotal = data.aTotal || PRESETS[pidx].f * 60000;
     bTotal = data.bTotal || PRESETS[pidx].r * 60000;
+    // Restore sound state — clamp to valid range in case SND_MODES array changes
+    if (typeof data.sndIdx === 'number' && data.sndIdx > 0 && data.sndIdx < SND_MODES.length) {
+      sndIdx = data.sndIdx;
+    }
 
     if (data.S === 'a_del') {
       if (data.delMs - passed <= 0) {
@@ -546,7 +598,7 @@ function loadState() {
       if (aMs <= 0) {
         const excess = passed - data.aMs;
         handleFocusComplete(true);
-        S = 'a_ov'; aOver = excess;
+        S = 'a_ov'; aOver = isFinite(excess) && excess > 0 ? excess : 0;
       }
     } else if (data.S === 'a_ov') {
       S = 'a_ov'; aOver = data.aOver + passed;
@@ -556,6 +608,8 @@ function loadState() {
     } else {
       S = data.S; aMs = data.aMs; bMs = data.bMs; aOver = data.aOver; delMs = data.delMs;
     }
+    // If overtime ran past the threshold while away, soft-lapse instead of showing +47:23
+    if (S === 'a_ov' && aOver >= ELAPSED_MS) S = 'a_elapsed';
     return true;
   } catch (e) {
     return false;
@@ -620,7 +674,7 @@ $('clk-trigger').addEventListener('click', ()=>{
     gotoBreak(); H.tap();
   } else if(S==='b_run'){
     gotoFocus(); H.tap();
-  } else if(S==='b_done'){
+  } else if(S==='b_done' || S==='a_elapsed'){
     aMs=aTotal; bMs=bTotal; aOver=0;
     fdA.reset(); fdB.reset();
     fdA.update(aMs,false); fdB.update(bMs,false);
@@ -631,7 +685,7 @@ $('clk-trigger').addEventListener('click', ()=>{
 });
 
 function gotoBreak(){
-  stopTick();
+  stopTick(true);
   const baseBreak = incPend ? bMs + INC : bMs;
   bMs = Math.max(0, baseBreak - aOver);
   
@@ -642,7 +696,7 @@ function gotoBreak(){
 }
 
 function gotoFocus(){
-  stopTick();
+  stopTick(true);
   if(aMs <= 0) aMs = aTotal; 
   aOver=0; warnFd=false; notifFd=false;
   fdA.reset(); fdA.update(aMs,false);
@@ -650,68 +704,85 @@ function gotoFocus(){
 }
 
 function startTick(){
-  stopTick(); lastT=performance.now();
+  // Only clear interval — wake lock is managed by state transitions, not tick lifecycle
+  if(ticker){clearInterval(ticker);ticker=null;}
+  lastT=performance.now();
   ticker=setInterval(()=>{
     if(lastT===null)return;
     const now=performance.now(); tick(now-lastT); lastT=now;
   },80);
 }
-function stopTick(){if(ticker){clearInterval(ticker);ticker=null}dropWake()}
+function stopTick(releaseWake=false){
+  if(ticker){clearInterval(ticker);ticker=null;}
+  if(releaseWake) dropWake();
+}
 
 function handleFocusComplete(silent = false) {
-  aMs = 0; incPend = true; sess++; 
+  aMs = 0; incPend = true; sess++;
+  // Brief gold flash on the session counter at every milestone
+  sessCtr.classList.remove('flash');
+  requestAnimationFrame(()=>{ requestAnimationFrame(()=>{ sessCtr.classList.add('flash'); }); });
   if(!silent) {
     H.done(); notify('Focus complete','Time for a break.');
   }
 }
 
 function tick(dt){
+  let dirty=false;
   if(S==='a_del'){
     const ps=Math.ceil(delMs/1000); delMs-=dt; const cs=Math.ceil(Math.max(0,delMs)/1000);
     if(cs<ps&&cs>0) H.tick();
     if(delMs<=0){S='a_run';delMs=0;grabWake();H.run();render();saveState();return}
+    dirty=true; // countdown hint text changes each second
   } else if(S==='a_run'){
     aMs-=dt;
     if(!warnFd&&aMs<=WARN_MS&&aMs>0){warnFd=true;H.warn()}
-    if(aMs<=0){ handleFocusComplete(false); S='a_ov'; aOver=0; } else fdA.update(aMs,true);
+    if(aMs<=0){ handleFocusComplete(false); S='a_ov'; aOver=0; dirty=true; }
+    else { fdA.update(aMs,true); progEl.style.transform=`scaleX(${Math.max(0,aMs/aTotal)})`; } // FlipDisplay.update() has its own second-change guard
   } else if(S==='a_ov'){
-    aOver+=dt;
+    aOver+=dt; dirty=true; // overtime counter always advancing
   } else if(S==='b_run'){
     bMs-=dt;
     if(!notifFd&&bTotal>NOTIF_5MIN&&bMs<=NOTIF_5MIN&&bMs>0){ notifFd=true; notify('Break ending soon','5 minutes remaining.'); }
     if(!warnFd&&bMs<=WARN_MS&&bMs>0){warnFd=true;H.warn()}
     if(bMs<=0){
-      bMs=0; S='b_done'; fdB.update(0,false); stopTick(); H.bDone();
+      bMs=0; S='b_done'; fdB.update(0,false); stopTick(true); H.bDone();
       notify('Break over','Ready to focus again.');
-    } else fdB.update(bMs,true);
+      dirty=true;
+    } else { fdB.update(bMs,true); progEl.style.transform=`scaleX(${Math.max(0,bMs/bTotal)})`; }
   }
-  
-  if(Math.random() < 0.04) saveState(); 
-  render();
+  // Only push a full DOM render when something actually changed visually
+  if(dirty) render();
 }
 
 // ── CONTEXTUAL DESIGN RENDERING ENGINE ────────────────
 const ovRest=$('ov-rest');
 function render(){
   canvasEl.setAttribute('data-state', S);
+  clkEl.classList.toggle('b-done', S==='b_done');
 
   if(S==='idle'){
     fdaView.style.display='flex'; fdbView.style.display='none'; ovd.style.display='none'; ovRest.style.display='none';
     fdA.color('#544e46'); fdA.card('#0f0e0d');
     stateIndicator.textContent='READY'; stateIndicator.style.color='var(--text-soft)';
     ha.textContent='TAP TO START';
+    progEl.style.opacity='0';
 
   } else if(S==='a_del'){
     fdaView.style.display='flex'; fdbView.style.display='none'; ovd.style.display='none'; ovRest.style.display='none';
     fdA.color('#e8e5e0'); fdA.card('#171513');
     stateIndicator.textContent='FOCUS'; stateIndicator.style.color='var(--text-bright)';
-    ha.textContent='STARTING IN '+Math.max(1,Math.ceil(delMs/1000));
+    const delTxt='STARTING IN '+Math.max(1,Math.ceil(delMs/1000));
+    if(ha.textContent!==delTxt) ha.textContent=delTxt;
+    progEl.style.opacity='0';
 
   } else if(S==='a_run'){
     fdaView.style.display='flex'; fdbView.style.display='none'; ovd.style.display='none'; ovRest.style.display='none';
     fdA.color('#ffbe85'); fdA.card('#0f0e0d');
     stateIndicator.textContent='FOCUS'; stateIndicator.style.color='var(--gold)';
     ha.textContent='TAP TO TAKE DOWNTIME';
+    progEl.style.opacity='1'; progEl.style.background='rgba(194,166,126,0.45)';
+    progEl.style.transform=`scaleX(${Math.max(0,aMs/aTotal)})`;
 
   } else if(S==='a_ov'){
     fdaView.style.display='none'; fdbView.style.display='none'; ovd.style.display='block'; ovRest.style.display='block';
@@ -724,18 +795,28 @@ function render(){
     ovRest.textContent='BREAK '+String(rm).padStart(2,'0')+':'+String(rsc).padStart(2,'0')+' REMAINING';
     stateIndicator.textContent='OVERTIME'; stateIndicator.style.color='#ff4545';
     ha.textContent='TAP ANYWHERE TO START BREAK';
+    progEl.style.opacity='0';
 
   } else if(S==='b_run'){
     fdaView.style.display='none'; fdbView.style.display='flex'; ovd.style.display='none'; ovRest.style.display='none';
     fdB.color('#82ccff'); fdB.card('#0a1117');
     stateIndicator.textContent='BREAK'; stateIndicator.style.color='#82ccff';
     ha.textContent='TAP TO END BREAK EARLY';
+    progEl.style.opacity='1'; progEl.style.background='rgba(130,204,255,0.3)';
+    progEl.style.transform=`scaleX(${Math.max(0,bMs/bTotal)})`;
 
   } else if(S==='b_done'){
     fdaView.style.display='none'; fdbView.style.display='flex'; ovd.style.display='none'; ovRest.style.display='none';
     fdB.color('#223f54'); fdB.card('#060a0f');
     stateIndicator.textContent='BREAK OVER'; stateIndicator.style.color='var(--text-soft)';
     ha.textContent=(sess>0&&sess%4===0)?'TAKE A LONG BREAK NOW':'TAP TO FOCUS AGAIN';
+    progEl.style.opacity='0';
+  } else if(S==='a_elapsed'){
+    fdaView.style.display='flex'; fdbView.style.display='none'; ovd.style.display='none'; ovRest.style.display='none';
+    fdA.color('#544e46'); fdA.card('#0f0e0d');
+    stateIndicator.textContent='AWAY'; stateIndicator.style.color='var(--text-soft)';
+    ha.textContent='SESSION ENDED · TAP TO BEGIN';
+    progEl.style.opacity='0';
   }
 
   const s4=(sess%4===0&&sess>0)?4:sess%4;
@@ -749,7 +830,7 @@ function showInc(){
 }
 
 function doExit(){
-  stopTick(); clearTimeout(incTO); S='home';
+  stopTick(true); clearTimeout(incTO); S='home';
   sess=0; incPend=false; warnFd=false; notifFd=false; aOver=0; delMs=DELAY;
   localStorage.removeItem('tempo_engine_cache');
   clkEl.classList.remove('show'); homeEl.classList.remove('gone');
@@ -759,11 +840,38 @@ function doExit(){
   stateIndicator.textContent='READY'; stateIndicator.style.color='var(--text-soft)';
 }
 
+// ── HOLD-TO-DISMISS ──────────────────────────────────
+(function(){
+  const btn=$('exit-btn');
+  let holdTO=null;
+  function startHold(e){
+    e.stopPropagation();
+    if(e.pointerType==='mouse'){ doExit(); return; }
+    btn.classList.add('holding');
+    holdTO=setTimeout(()=>{ btn.classList.remove('holding'); doExit(); },1500);
+  }
+  function cancelHold(){
+    btn.classList.remove('holding');
+    clearTimeout(holdTO); holdTO=null;
+  }
+  btn.addEventListener('pointerdown', startHold);
+  btn.addEventListener('pointerup',   cancelHold);
+  btn.addEventListener('pointerleave',cancelHold);
+  btn.addEventListener('pointercancel',cancelHold);
+  // Prevent the regular click from firing and triggering clk-trigger
+  btn.addEventListener('click', e=>e.stopPropagation());
+})();
+
 // ── BOOTSTRAP RESURRECTION ───────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
   const recovered = loadState();
   pickPreset(pidx, false);
-  if (recovered && S !== 'home') initClock(true);
+  if (recovered && S !== 'home') {
+    initClock(true);
+    // Restore sound — user must interact first (autoplay policy), so we update UI only;
+    // audio resumes on next user tap via cycleSnd or ambient.select call
+    updateSndUI();
+  }
 });
 
 if('serviceWorker'in navigator){
@@ -774,15 +882,20 @@ if('serviceWorker'in navigator){
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) {
     saveState();
-    stopTick();
+    stopTick(true);
   } else {
     const recovered = loadState();
     if (recovered && S !== 'home') {
       initClock(true);
+      // Re-acquire wake lock if we're in an active running state
+      if (S === 'a_run' || S === 'b_run') grabWake();
+      // Resume audio if it was active before backgrounding
+      if (sndIdx > 0) ambient.select(SND_MODES[sndIdx]);
+      // initClock already calls render() — no second call needed
     } else {
       lastT = performance.now();
+      render();
     }
-    render(); // Immediate layout recalculation on primary thread execution pass
   }
 });
 document.addEventListener('touchmove',e=>e.preventDefault(),{passive:false});
