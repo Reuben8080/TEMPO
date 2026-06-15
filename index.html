@@ -26,10 +26,10 @@
   --text-dark: #383430;
   --gold: #c2a67e;
   
-  /* Engine Flip Tokens */
-  --fw:62px;--fh:88px;--ffs:76px;
-  --ftop:6px;--fbot:-38px;
-  --frad:4px;--fc:#0f0e0d;--fd:#e8e5e0;
+  /* Engine Flip Tokens (Default Large Screen Layout) */
+  --fw: 68px; --fh: 96px; --ffs: 82px;
+  --ftop: 7px; --fbot: -41px;
+  --frad: 4px; --fc: #0f0e0d; --fd: #e8e5e0;
 }
 
 html,body{
@@ -57,19 +57,19 @@ html,body{
   padding-top:max(32px, env(safe-area-inset-top));
 }
 
-/* Sound State Map Glows */
+/* Ambient Audio States */
 .canvas[data-sound="rain"] { --ambient-glow: radial-gradient(circle at 50% 30%, rgba(24, 36, 43, 0.35) 0%, rgba(5, 6, 8, 0) 75%); }
 .canvas[data-sound="storm"] { --ambient-glow: radial-gradient(circle at 50% 30%, rgba(20, 22, 33, 0.4) 0%, rgba(4, 5, 7, 0) 70%); }
 .canvas[data-sound="cafe"] { --ambient-glow: radial-gradient(circle at 50% 30%, rgba(46, 34, 23, 0.35) 0%, rgba(6, 5, 4, 0) 75%); }
 .canvas[data-sound="library"] { --ambient-glow: radial-gradient(circle at 50% 30%, rgba(28, 33, 26, 0.25) 0%, rgba(4, 5, 4, 0) 75%); }
 
-/* Active Timer State Overrides */
+/* Operational Target Overrides */
 .canvas[data-state="a_run"] { --ambient-glow: radial-gradient(circle at 50% 40%, rgba(61, 35, 18, 0.25) 0%, rgba(5, 4, 3, 0) 70%); }
 .canvas[data-state="a_ov"] { --ambient-glow: radial-gradient(circle at 50% 50%, rgba(82, 16, 16, 0.35) 0%, rgba(8, 3, 3, 0) 70%); }
 .canvas[data-state="b_run"] { --ambient-glow: radial-gradient(circle at 50% 60%, rgba(16, 48, 69, 0.35) 0%, rgba(3, 5, 8, 0) 70%); }
 
 /* ═══════════════════════════════════════════
-   FLIP ENGINE COMPONENTS (Sleekened/Integrated)
+   FLIP SCALING DISPLAY ENGINE
 ═══════════════════════════════════════════ */
 .flip-row{display:flex;align-items:center;gap:4px}
 .flip-sep{
@@ -131,128 +131,41 @@ html,body{
 @keyframes fUp{from{transform:rotateX(0)}    to{transform:rotateX(-90deg)}}
 @keyframes fDn{from{transform:rotateX(90deg)}to{transform:rotateX(0)}}
 
+/* Scoped Dimensions for Small Home Preview Grids */
+.h-intervals {
+  --fw: 38px; --fh: 54px; --ffs: 46px;
+  --ftop: 4px; --fbot: -23px;
+  display:flex; align-items:center; justify-content:center; gap:40px;
+}
+
 /* ═══════════════════════════════════════════
    THE LUXURY MONOGRAPH HOME
 ═══════════════════════════════════════════ */
 #home {
   position:absolute;inset:32px;
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
+  display:flex; flex-direction:column; justify-content:space-between;
   transition:opacity .6s cubic-bezier(0.25, 1, 0.5, 1), transform .6s cubic-bezier(0.25, 1, 0.5, 1);
 }
 #home.gone{opacity:0;transform:translateY(-8px);pointer-events:none}
 
-.h-top {
-  display:flex;
-  justify-content:space-between;
-  align-items:baseline;
-}
-.h-brand {
-  font-family:var(--serif);
-  font-size:24px;
-  letter-spacing:0.02em;
-  color:var(--text-bright);
-}
-#h-snd {
-  font-size:11px;
-  font-weight:500;
-  letter-spacing:0.2em;
-  color:var(--text-soft);
-  cursor:pointer;
-  transition:color 0.3s;
-}
+.h-top { display:flex; justify-content:space-between; align-items:baseline; }
+.h-brand { font-family:var(--serif); font-size:24px; letter-spacing:0.02em; color:var(--text-bright); }
+#h-snd { font-size:11px; font-weight:500; letter-spacing:0.2em; color:var(--text-soft); cursor:pointer; transition:color 0.3s; }
 #h-snd.on { color:var(--gold); }
 
-/* Absolute Typographic Centerpiece */
-.h-hero {
-  align-self:center;
-  text-align:center;
-  margin-top:-20px;
-}
-#h-pname {
-  font-family:var(--serif);
-  font-size:54px;
-  font-weight:400;
-  letter-spacing:0.04em;
-  color:var(--text-bright);
-  margin-bottom:32px;
-}
-.h-intervals {
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:40px;
-}
-.h-int-group {
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:16px;
-}
-.h-label {
-  font-size:10px;
-  font-weight:600;
-  letter-spacing:0.25em;
-  color:var(--text-dark);
-}
-.h-divide {
-  font-family:var(--serif);
-  font-style:italic;
-  font-size:20px;
-  color:var(--text-dark);
-  margin-top:24px;
-}
+.h-hero { align-self:center; text-align:center; margin-top:-20px; }
+#h-pname { font-family:var(--serif); font-size:54px; font-weight:400; letter-spacing:0.04em; color:var(--text-bright); margin-bottom:32px; }
+.h-int-group { display:flex; flex-direction:column; align-items:center; gap:16px; }
+.h-label { font-size:10px; font-weight:600; letter-spacing:0.25em; color:var(--text-dark); }
+.h-divide { font-family:var(--serif); font-style:italic; font-size:20px; color:var(--text-dark); margin-top:24px; }
 
-/* Typographic Continuous Index Selectors */
-.h-bottom {
-  display:flex;
-  flex-direction:column;
-  gap:32px;
-}
-.h-spectrum-wrapper {
-  display:flex;
-  flex-direction:column;
-  gap:12px;
-  align-items:center;
-}
-.h-spectrum-title {
-  font-size:9px;
-  font-weight:700;
-  letter-spacing:0.3em;
-  color:var(--text-dark);
-}
-.h-spectrum {
-  display:flex;
-  justify-content:center;
-  gap:24px;
-  width:100%;
-}
-.spec-item {
-  font-size:12px;
-  font-weight:500;
-  letter-spacing:0.15em;
-  color:var(--text-dark);
-  cursor:pointer;
-  transition:color 0.3s, transform 0.3s;
-}
-.spec-item.on {
-  color:var(--text-bright);
-  transform:scale(1.05);
-}
-#sbtn {
-  font-family:var(--sans);
-  background:none;
-  border:none;
-  font-size:13px;
-  font-weight:600;
-  letter-spacing:0.3em;
-  color:var(--gold);
-  cursor:pointer;
-  padding:16px;
-  align-self:center;
-  transition:opacity 0.2s, transform 0.2s;
-}
+.h-bottom { display:flex; flex-direction:column; gap:32px; }
+.h-spectrum-wrapper { display:flex; flex-direction:column; gap:12px; align-items:center; }
+.h-spectrum-title { font-size:9px; font-weight:700; letter-spacing:0.3em; color:var(--text-dark); }
+.h-spectrum { display:flex; justify-content:center; gap:24px; width:100%; }
+.spec-item { font-size:12px; font-weight:500; letter-spacing:0.15em; color:var(--text-dark); cursor:pointer; transition:color 0.3s, transform 0.3s; }
+.spec-item.on { color:var(--text-bright); transform:scale(1.05); }
+#sbtn { font-family:var(--sans); background:none; border:none; font-size:13px; font-weight:600; letter-spacing:0.3em; color:var(--gold); cursor:pointer; padding:16px; align-self:center; transition:opacity 0.2s, transform 0.2s; }
 #sbtn:active { transform:scale(0.98); opacity:0.8; }
 
 /* ═══════════════════════════════════════════
@@ -260,148 +173,54 @@ html,body{
 ═══════════════════════════════════════════ */
 #clk {
   position:absolute;inset:32px;
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
-  opacity:0;pointer-events:none;
-  transition:opacity .8s ease, transform .8s ease;
-  transform:translateY(12px);
+  display:flex; flex-direction:column; justify-content:space-between;
+  opacity:0; pointer-events:none;
+  transition:opacity .8s ease, transform .8s ease; transform:translateY(12px);
 }
 #clk.show { opacity:1; pointer-events:all; transform:translateY(0); }
 
-.c-top {
-  display:flex;
-  justify-content:space-between;
-  align-items:baseline;
-}
-.c-state-lbl {
-  font-size:11px;
-  font-weight:600;
-  letter-spacing:0.25em;
-  color:var(--text-soft);
-  transition:color 0.5s;
-}
-#sess-ctr {
-  font-family:var(--mono);
-  font-size:11px;
-  letter-spacing:0.1em;
-  color:var(--text-dark);
-}
-.ov-rest-hint {
-  font-size:11px;
-  letter-spacing:0.15em;
-  color:var(--text-dark);
-  font-family:var(--mono);
-  margin-top:4px;
-  transition:opacity 0.4s;
-}
+.c-top { display:flex; justify-content:space-between; align-items:baseline; }
+.c-state-lbl { font-size:11px; font-weight:600; letter-spacing:0.25em; color:var(--text-soft); transition:color 0.5s; }
+#sess-ctr { font-family:var(--mono); font-size:11px; letter-spacing:0.1em; color:var(--text-dark); }
+.ov-rest-hint { font-size:11px; letter-spacing:0.15em; color:var(--text-dark); font-family:var(--mono); margin-top:4px; transition:opacity 0.4s; }
 
-.c-main {
-  flex:1;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:20px;
-}
-.ov-ctr {
-  font-family:var(--mono);
-  font-weight:400;
-  font-size:clamp(54px, 12vw, 84px);
-  letter-spacing:-0.03em;
-  color:#ff4545;
-  display:none;
-  line-height:1;
-}
-.c-hint {
-  font-size:11px;
-  letter-spacing:0.2em;
-  color:var(--text-dark);
-  min-height:14px;
-  text-transform:uppercase;
-}
-.inc-badge {
-  font-size:12px;
-  font-weight:700;
-  letter-spacing:0.15em;
-  color:#82ccff;
-  opacity:0;
-  transition:opacity 0.4s;
-  background: rgba(16, 48, 69, 0.6);
-  padding: 6px 14px;
-  border-radius: 3px;
-}
+.c-main { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px; }
+.ov-ctr { font-family:var(--mono); font-weight:400; font-size:clamp(54px, 12vw, 84px); letter-spacing:-0.03em; color:#ff4545; display:none; line-height:1; }
+.c-hint { font-size:11px; letter-spacing:0.2em; color:var(--text-dark); min-height:14px; text-transform:uppercase; }
+.inc-badge { font-size:12px; font-weight:700; letter-spacing:0.15em; color:#82ccff; opacity:0; transition:opacity 0.4s; background: rgba(16, 48, 69, 0.6); padding: 6px 14px; border-radius: 3px; }
 .inc-badge.show { opacity:1; }
 
-.c-bottom {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-#clk-snd {
-  font-size:11px;
-  font-weight:500;
-  letter-spacing:0.2em;
-  color:var(--text-dark);
-  cursor:pointer;
-}
+.c-bottom { display:flex; justify-content:space-between; align-items:center; }
+#clk-snd { font-size:11px; font-weight:500; letter-spacing:0.2em; color:var(--text-dark); cursor:pointer; }
 #clk-snd.on { color:var(--gold); }
-#exit-btn {
-  background:none; border:none;
-  font-size:11px; font-weight:500; letter-spacing:0.2em;
-  color:var(--text-soft); cursor:pointer;
-}
+#exit-btn { background:none; border:none; font-size:11px; font-weight:500; letter-spacing:0.2em; color:var(--text-soft); cursor:pointer; }
 
-/* Adaptive Space Scaling */
+/* Desktop Frame Normalization */
 @media(min-width:768px){
   .canvas { padding:48px; }
-  #home, #clk { inset:48px; }
-  #home { max-width:520px; margin:0 auto; }
-  #clk { max-width:600px; margin:0 auto; }
+  #home, #clk { inset:48px; max-width:520px; margin:0 auto; }
+  #clk { max-width:600px; }
   #h-pname { font-size:64px; }
 }
 
-/* ── MOBILE CLIPPING FIXES ───────────────────────────── */
+/* ── NATIVE RESPONSIVE LAYOUT SCALING ────────────────── */
 @media(max-width:480px){
-  /* Scale down active clock flip digits */
   :root {
-    --fw:44px; --fh:64px; --ffs:54px;
-    --ftop:4px; --fbot:-27px;
+    --fw: 44px; --fh: 64px; --ffs: 54px;
+    --ftop: 4px; --fbot: -27px;
   }
-  /* Clamp home title so it never overflows */
-  #h-pname {
-    font-size: clamp(32px, 9vw, 54px);
-    margin-bottom: 20px;
-  }
-  /* Remove negative margin that causes overlap on short screens */
-  .h-hero {
-    margin-top: 0;
-  }
-  /* Tighten interval gap for narrow viewports */
   .h-intervals {
+    --fw: 28px; --fh: 40px; --ffs: 34px;
+    --ftop: 3px; --fbot: -17px;
     gap: 20px;
   }
-  /* Reduce canvas padding so content has more room */
-  .canvas {
-    padding: 20px;
-    padding-bottom: max(20px, env(safe-area-inset-bottom));
-    padding-top: max(20px, env(safe-area-inset-top));
-  }
-  #home, #clk {
-    inset: 20px;
-  }
-  /* Tighten bottom section gap */
-  .h-bottom {
-    gap: 20px;
-  }
-  /* Shrink spectrum item text slightly */
-  .spec-item {
-    font-size: 11px;
-    letter-spacing: 0.1em;
-  }
-  .h-spectrum {
-    gap: 16px;
-  }
+  #h-pname { font-size: clamp(32px, 9vw, 54px); margin-bottom: 20px; }
+  .h-hero { margin-top: 0; }
+  .canvas { padding: 20px; padding-bottom: max(20px, env(safe-area-inset-bottom)); padding-top: max(20px, env(safe-area-inset-top)); }
+  #home, #clk { inset: 20px; }
+  .h-bottom { gap: 20px; }
+  .spec-item { font-size: 11px; letter-spacing: 0.1em; }
+  .h-spectrum { gap: 16px; }
 }
 </style>
 </head>
@@ -463,7 +282,7 @@ html,body{
 </div>
 
 <script>
-// ── PRESETS ──────────────────────────────────────────
+// ── CONFIGURATION PRESETS ────────────────────────────
 const PRESETS=[
   {name:'SPRINT',    f:15, r:3 },
   {name:'CLASSIC',   f:25, r:5 },
@@ -473,7 +292,7 @@ const PRESETS=[
 const DELAY=5000, WARN_MS=5000, INC=120000;
 const NOTIF_5MIN=5*60*1000;
 
-// ── FLIP DIGIT ENGINE ────────────────────────────────
+// ── MECHANICAL FLIP DIGIT SUBSYSTEM ──────────────────
 class FlipDigit{
   constructor(parent){
     this.el=document.createElement('div');
@@ -539,32 +358,16 @@ class FlipDisplay{
   }
   color(c){this.d.forEach(d=>d.color(c));this.sep.style.color=c}
   card(c){this.d.forEach(d=>d.card(c))}
-  size(fw,fh,ffs){
-    const tp=((fh/2)-(ffs/2))+'px', bt=(-(ffs/2))+'px';
-    this.d.forEach(d=>{
-      d.el.style.setProperty('--fw',fw+'px');
-      d.el.style.setProperty('--fh',fh+'px');
-      d.el.style.setProperty('--ffs',ffs+'px');
-      d.el.style.setProperty('--ftop',tp);
-      d.el.style.setProperty('--fbot',bt);
-    });
-    this.sep.style.fontSize=ffs+'px';
-  }
   reset(){this.d.forEach(d=>{d.cur=null});this._ls=-1}
 }
 
-// ── INITIALIZE RENDERING DECORATIONS ─────────────────
+// ── INITIALIZE MATRIX REPLICAS ───────────────────────
 const hA =new FlipDisplay('h-fda');
 const hB =new FlipDisplay('h-fdb');
 const fdA=new FlipDisplay('fda');
 const fdB=new FlipDisplay('fdb');
-const isMobile = window.innerWidth <= 480;
-hA.size(isMobile?28:38, isMobile?40:54, isMobile?34:46);
-hB.size(isMobile?28:38, isMobile?40:54, isMobile?34:46);
-fdA.size(isMobile?44:68, isMobile?64:96, isMobile?54:82);
-fdB.size(isMobile?44:68, isMobile?64:96, isMobile?54:82);
 
-// ── AUDIO LANDSCAPE ENGINE ───────────────────────────
+// ── SOUNDSCAPE COMPONENT CONTEXT ────────────────────
 class AmbientEngine{
   constructor(){
     this.ctx=null; this.out=null;
@@ -605,6 +408,7 @@ class AmbientEngine{
     let p=src; chain.forEach(n=>{p.connect(n);p=n}); p.connect(this.out); src.start(); this.nodes.push(src,...chain);
   }
   _fade(to,t=1.4){
+    if(!this.ctx || !this.out) return;
     const g=this.out.gain, now=this.ctx.currentTime;
     g.cancelScheduledValues(now); g.setValueAtTime(g.value,now); g.linearRampToValueAtTime(to,now+t);
   }
@@ -663,12 +467,11 @@ function cycleSnd(e){
 function updateSndUI(){
   const lbl=SND_LBLS[SND_MODES[sndIdx]], on=sndIdx>0;
   ['h-snd','clk-snd'].forEach(id=>{
-    const el=document.getElementById(id);
-    if(el){ el.textContent=lbl; el.classList.toggle('on',on); }
+    const el=$(id); if(el){ el.textContent=lbl; el.classList.toggle('on',on); }
   });
 }
 
-// ── HAPTICS ARCHITECTURE ─────────────────────────────
+// ── SYSTOLIC HAPTIC API ──────────────────────────────
 const vibe=p=>{try{navigator.vibrate?.(p)}catch(e){}};
 const H={
   tap:  ()=>vibe([30,20,50]),
@@ -679,7 +482,7 @@ const H={
   tick: ()=>vibe(10),
 };
 
-// ── SYSTEM HOOKS ─────────────────────────────────────
+// ── OS SYSTEMS INTERACTION LAYER ─────────────────────
 let wl=null;
 async function grabWake(){ if(wl)return; try{if('wakeLock'in navigator)wl=await navigator.wakeLock.request('screen')}catch(e){} }
 function dropWake(){try{wl?.release()}catch(e){}wl=null}
@@ -695,7 +498,7 @@ function notify(title,body){
   try{new Notification(title,{body,tag:'tempo',renotify:true,silent:true})}catch(e){}
 }
 
-// ── SYSTEM ENGINE STATE ──────────────────────────────
+// ── CHRONOS CORE ENGINE STATE ────────────────────────
 let pidx=1, S='home';
 let aTotal,bTotal,aMs,bMs,aOver=0,delMs=DELAY;
 let sess=0,incPend=false,warnFd=false,notifFd=false;
@@ -707,7 +510,59 @@ const stateIndicator=$('c-state-indicator'), sessCtr=$('sess-ctr'), ha=$('ha');
 const ovd=$('ovd'), incBadge=$('inc-b'), hPname=$('h-pname');
 const fdaView=$('fda'), fdbView=$('fdb');
 
-// ── BUILD TYPOGRAPHIC SPECTRUM INDEX ─────────────────
+// ── PERSISTENCE ENVELOPE CONTROLLER ──────────────────
+function saveState() {
+  const cache = {
+    S, pidx, aMs, bMs, aOver, delMs, sess, incPend,
+    aTotal, bTotal, savedAt: Date.now()
+  };
+  localStorage.setItem('tempo_engine_cache', JSON.stringify(cache));
+}
+
+function loadState() {
+  const raw = localStorage.getItem('tempo_engine_cache');
+  if (!raw) return false;
+  try {
+    const data = JSON.parse(raw);
+    const passed = Date.now() - data.savedAt;
+
+    pidx = data.pidx;
+    sess = data.sess;
+    incPend = data.incPend;
+    aTotal = data.aTotal || PRESETS[pidx].f * 60000;
+    bTotal = data.bTotal || PRESETS[pidx].r * 60000;
+
+    if (data.S === 'a_del') {
+      if (data.delMs - passed <= 0) {
+        S = 'a_run';
+        aMs = Math.max(0, data.aMs - (passed - data.delMs));
+        delMs = 0;
+        if (aMs <= 0) handleFocusComplete(true);
+      } else {
+        S = 'a_del'; delMs = data.delMs - passed; aMs = data.aMs;
+      }
+    } else if (data.S === 'a_run') {
+      S = 'a_run'; aMs = Math.max(0, data.aMs - passed);
+      if (aMs <= 0) {
+        const excess = passed - data.aMs;
+        handleFocusComplete(true);
+        S = 'a_ov'; aOver = excess;
+      }
+    } else if (data.S === 'a_ov') {
+      S = 'a_ov'; aOver = data.aOver + passed;
+    } else if (data.S === 'b_run') {
+      S = 'b_run'; bMs = Math.max(0, data.bMs - passed);
+      if (bMs <= 0) { bMs = 0; S = 'b_done'; }
+    } else {
+      S = data.S; aMs = data.aMs; bMs = data.bMs; aOver = data.aOver; delMs = data.delMs;
+    }
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+// ── SPECTRUM DISPLAY BUILDER ─────────────────────────
 PRESETS.forEach((p,i)=>{
   const el=document.createElement('div');
   el.className='spec-item'+(i===1?' on':'');
@@ -724,61 +579,73 @@ function pickPreset(i,anim){
   hB.color('#8a847c'); hB.card('#0f0e0d'); hB.sep.style.color='#383430';
   hA.update(PRESETS[i].f*60000,anim);
   hB.update(PRESETS[i].r*60000,anim);
+  saveState();
 }
 function homeNext(){pickPreset((pidx+1)%PRESETS.length,true);vibe(35)}
-pickPreset(1,false);
+
+// ── CORE RUNTIME PIPELINE ────────────────────────────
+function initClock(isRecovery = false){
+  const p = PRESETS[pidx];
+  if (!isRecovery) {
+    aTotal = p.f * 60000; bTotal = p.r * 60000;
+    aMs = aTotal; bMs = bTotal; aOver = 0; delMs = DELAY;
+    sess = 0; incPend = false; warnFd = false; notifFd = false;
+    S = 'idle'; stopTick();
+  }
+  fdA.reset(); fdB.reset();
+  fdA.update(aMs, false); fdB.update(bMs, false);
+  render();
+  
+  if (isRecovery && S !== 'idle' && S !== 'home') {
+    homeEl.classList.add('gone');
+    clkEl.classList.add('show');
+    if (S === 'a_del' || S === 'a_run' || S === 'a_ov' || S === 'b_run') startTick();
+  }
+}
 
 $('sbtn').addEventListener('click',()=>{
-  askNotif(); initClock();
-  homeEl.classList.add('gone');
-  clkEl.classList.add('show');
+  askNotif(); initClock(false);
+  homeEl.classList.add('gone'); clkEl.classList.add('show');
+  saveState();
 });
-
-// ── MAIN INTERACTIVE CORE ROUTINES ───────────────────
-function initClock(){
-  const p=PRESETS[pidx];
-  aTotal=p.f*60000; bTotal=p.r*60000;
-  aMs=aTotal; bMs=bTotal; aOver=0; delMs=DELAY;
-  sess=0; incPend=false; warnFd=false; notifFd=false;
-  S='idle'; stopTick();
-  fdA.reset(); fdB.reset();
-  fdA.update(aMs,false); fdB.update(bMs,false);
-  render();
-}
 
 $('clk-trigger').addEventListener('click', ()=>{
   if(S==='idle'){
     S='a_del'; delMs=DELAY; warnFd=false; startTick(); H.tap();
   } else if(S==='a_del'){
-    // impatient tap during countdown — just skip straight to running
     S='a_run'; delMs=0; grabWake(); H.run();
   } else if(S==='a_run'){
-    incPend=false; gotoBreak(); H.tap();
+    incPend=false; gotoBreak(); H.tap(); // explicit manual jump clears earned break bonus
   } else if(S==='a_ov'){
     gotoBreak(); H.tap();
   } else if(S==='b_run'){
     gotoFocus(); H.tap();
   } else if(S==='b_done'){
-    aMs=aTotal; bMs=bTotal;
+    aMs=aTotal; bMs=bTotal; aOver=0;
     fdA.reset(); fdB.reset();
     fdA.update(aMs,false); fdB.update(bMs,false);
     S='a_del'; delMs=DELAY; warnFd=false; startTick(); H.tap();
   }
+  saveState();
   render();
 });
 
 function gotoBreak(){
   stopTick();
-  bMs=incPend?bTotal+INC:bTotal;
-  if(incPend)showInc();
+  // Preserve continuous counting matrix
+  const baseBreak = incPend ? bMs + INC : bMs;
+  bMs = Math.max(0, baseBreak - aOver);
+  
+  if(incPend) showInc();
   incPend=false; warnFd=false; notifFd=false;
   fdB.reset(); fdB.update(bMs,false);
   S='b_run'; startTick(); grabWake();
 }
+
 function gotoFocus(){
   stopTick();
-  aMs=aTotal; aOver=0; warnFd=false; notifFd=false;
-  // preserve incPend — if user earned bonus break but exited early, carry it to next break
+  if(aMs <= 0) aMs = aTotal; // only replenish full block if cycle was completed
+  aOver=0; warnFd=false; notifFd=false;
   fdA.reset(); fdA.update(aMs,false);
   S='a_del'; delMs=DELAY; startTick();
 }
@@ -792,18 +659,22 @@ function startTick(){
 }
 function stopTick(){if(ticker){clearInterval(ticker);ticker=null}dropWake()}
 
+function handleFocusComplete(silent = false) {
+  aMs = 0; incPend = true; sess++; 
+  if(!silent) {
+    H.done(); notify('Focus complete','Time for a break.');
+  }
+}
+
 function tick(dt){
   if(S==='a_del'){
     const ps=Math.ceil(delMs/1000); delMs-=dt; const cs=Math.ceil(Math.max(0,delMs)/1000);
     if(cs<ps&&cs>0) H.tick();
-    if(delMs<=0){S='a_run';delMs=0;grabWake();H.run();render();return}
+    if(delMs<=0){S='a_run';delMs=0;grabWake();H.run();render();saveState();return}
   } else if(S==='a_run'){
     aMs-=dt;
     if(!warnFd&&aMs<=WARN_MS&&aMs>0){warnFd=true;H.warn()}
-    if(aMs<=0){
-      aMs=0; aOver=0; incPend=true; sess++; S='a_ov'; H.done();
-      notify('Focus complete','Time for a break.');
-    } else fdA.update(aMs,true);
+    if(aMs<=0){ handleFocusComplete(false); S='a_ov'; aOver=0; } else fdA.update(aMs,true);
   } else if(S==='a_ov'){
     aOver+=dt;
   } else if(S==='b_run'){
@@ -815,11 +686,13 @@ function tick(dt){
       notify('Break over','Ready to focus again.');
     } else fdB.update(bMs,true);
   }
+  
+  if(Math.random() < 0.04) saveState(); // distribution throttle writing layers
   render();
 }
 
-// ── PREMIUM CONTEXTUAL RENDER ────────────────────────
-const ovRest=document.getElementById('ov-rest');
+// ── CONTEXTUAL DESIGN RENDERING ENGINE ────────────────
+const ovRest=$('ov-rest');
 function render(){
   canvasEl.setAttribute('data-state', S);
 
@@ -845,8 +718,8 @@ function render(){
     fdaView.style.display='none'; fdbView.style.display='none'; ovd.style.display='block'; ovRest.style.display='block';
     const os=Math.floor(aOver/1000);
     ovd.textContent='+'+String(Math.floor(os/60)).padStart(2,'0')+':'+String(os%60).padStart(2,'0');
-    // Show how much break time remains after overtime eats into it
-    const restLeft=Math.max(0, bTotal - aOver);
+    
+    const restLeft=Math.max(0, bMs - aOver);
     const rs=Math.ceil(restLeft/1000);
     const rm=Math.floor(rs/60), rsc=rs%60;
     ovRest.textContent='BREAK '+String(rm).padStart(2,'0')+':'+String(rsc).padStart(2,'0')+' REMAINING';
@@ -877,22 +750,22 @@ function showInc(){
 }
 
 function doExit(){
-  stopTick();
-  clearTimeout(incTO);
-  S='home';
-  sess=0; incPend=false; warnFd=false; notifFd=false;
-  aOver=0; delMs=DELAY;
-  clkEl.classList.remove('show');
-  homeEl.classList.remove('gone');
-  canvasEl.setAttribute('data-state','idle');
-  incBadge.classList.remove('show');
+  stopTick(); clearTimeout(incTO); S='home';
+  sess=0; incPend=false; warnFd=false; notifFd=false; aOver=0; delMs=DELAY;
+  localStorage.removeItem('tempo_engine_cache');
+  clkEl.classList.remove('show'); homeEl.classList.remove('gone');
+  canvasEl.setAttribute('data-state','idle'); incBadge.classList.remove('show');
   fdA.reset(); fdB.reset();
-  // reset session counter display
-  sessCtr.textContent='0 / 4 sessions';
-  sessCtr.style.color='var(--text-dark)';
-  stateIndicator.textContent='READY';
-  stateIndicator.style.color='var(--text-soft)';
+  sessCtr.textContent='0 / 4 sessions'; sessCtr.style.color='var(--text-dark)';
+  stateIndicator.textContent='READY'; stateIndicator.style.color='var(--text-soft)';
 }
+
+// ── BOOTSTRAP RESURRECTION ───────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  const recovered = loadState();
+  pickPreset(pidx, false);
+  if (recovered && S !== 'home') initClock(true);
+});
 
 if('serviceWorker'in navigator){
   window.addEventListener('load',()=>{ navigator.serviceWorker.register('sw.js').catch(e=>console.warn(e)); });
@@ -900,11 +773,20 @@ if('serviceWorker'in navigator){
 
 document.addEventListener('visibilitychange',()=>{
   if(document.hidden){
-    lastT=null;
+    saveState(); lastT=null;
   } else {
-    // Only resume tick reference if we're in a state that should be counting
-    // For a_ov (overtime), don't silently add hidden time — reset reference
-    if(ticker) lastT=performance.now();
+    const raw = localStorage.getItem('tempo_engine_cache');
+    if (raw && ticker) {
+      try {
+        const data = JSON.parse(raw);
+        const deltaReal = Date.now() - data.savedAt;
+        if (S === 'a_run') aMs = Math.max(0, data.aMs - deltaReal);
+        if (S === 'b_run') bMs = Math.max(0, data.bMs - deltaReal);
+        if (S === 'a_ov')  aOver = data.aOver + deltaReal;
+        if (S === 'a_del') delMs = Math.max(0, data.delMs - deltaReal);
+      } catch(e){}
+    }
+    lastT = performance.now();
   }
 });
 document.addEventListener('touchmove',e=>e.preventDefault(),{passive:false});
