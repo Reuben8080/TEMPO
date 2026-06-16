@@ -838,6 +838,7 @@ function doExit(){
   fdA.reset(); fdB.reset();
   sessCtr.textContent='0 / 4 sessions'; sessCtr.style.color='var(--text-dark)';
   stateIndicator.textContent='READY'; stateIndicator.style.color='var(--text-soft)';
+  progEl.style.opacity='0'; progEl.style.transform='scaleX(0)';
 }
 
 // ── HOLD-TO-DISMISS ──────────────────────────────────
