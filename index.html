@@ -675,7 +675,15 @@ $('clk-trigger').addEventListener('click', ()=>{
   } else if(S==='a_del'){
     S='a_run'; delMs=0; grabWake(); H.run();
   } else if(S==='a_run'){
-    incPend=false; gotoBreak(); H.tap(); 
+    if(aMs<=aTotal*0.05){
+      // Close enough to the finish line — count it as a genuine completed session
+      // rather than a discarded early exit. handleFocusComplete() does sess++,
+      // the gold flash, and the H.done() haptic; aOver stays 0 since this isn't
+      // overtime, it's just rounding the last sliver of focus up to "finished."
+      handleFocusComplete(false); aOver=0; gotoBreak();
+    } else {
+      incPend=false; gotoBreak(); H.tap();
+    }
   } else if(S==='a_ov'){
     gotoBreak(); H.tap();
   } else if(S==='b_run'){
