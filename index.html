@@ -205,7 +205,7 @@ html,body{
   transition:none;
 }
 #exit-btn.holding::after {
-  width:100%; transition:width 1.4s linear;
+  width:100%; transition:width 420ms linear; /* matches HOLD_MS exactly — visual fill and dismiss fire in lockstep */
 }
 
 /* Desktop Frame Normalization */
@@ -579,6 +579,12 @@ function loadState() {
     incPend = data.incPend;
     aTotal = data.aTotal || PRESETS[pidx].f * 60000;
     bTotal = data.bTotal || PRESETS[pidx].r * 60000;
+    // Baseline-restore every timer var first — each branch below only needs to
+    // override what actually changes. Previously a_del/a_run/a_ov each left one
+    // or more of these as stale `undefined` on a hard reload, which produced
+    // NaN once that variable was later used in arithmetic (e.g. gotoBreak()'s
+    // bMs + INC after recovering mid-focus with bMs never restored).
+    aMs = data.aMs; bMs = data.bMs; aOver = data.aOver; delMs = data.delMs;
     // Restore sound state — clamp to valid range in case SND_MODES array changes
     if (typeof data.sndIdx === 'number' && data.sndIdx > 0 && data.sndIdx < SND_MODES.length) {
       sndIdx = data.sndIdx;
@@ -606,7 +612,7 @@ function loadState() {
       S = 'b_run'; bMs = Math.max(0, data.bMs - passed);
       if (bMs <= 0) { bMs = 0; S = 'b_done'; }
     } else {
-      S = data.S; aMs = data.aMs; bMs = data.bMs; aOver = data.aOver; delMs = data.delMs;
+      S = data.S;
     }
     // If overtime ran past the threshold while away, soft-lapse instead of showing +47:23
     if (S === 'a_ov' && aOver >= ELAPSED_MS) S = 'a_elapsed';
@@ -841,17 +847,25 @@ function doExit(){
   progEl.style.opacity='0'; progEl.style.transform='scaleX(0)';
 }
 
-// ── HOLD-TO-DISMISS ──────────────────────────────────
+// ── PRESS-TO-DISMISS ──────────────────────────────────
 (function(){
   const btn=$('exit-btn');
+  const HOLD_MS=420; // short but deliberate — long enough to filter out accidental taps, short enough to not feel like a chore
   let holdTO=null;
   function startHold(e){
     e.stopPropagation();
-    if(e.pointerType==='mouse'){ doExit(); return; }
+    e.preventDefault(); // suppress the browser/OS's own default press feedback so our vibe() calls are the only haptic felt
+    if(e.pointerType==='mouse'){ vibe([15,10,35]); doExit(); return; }
+    vibe(12); // light acknowledge tick — confirms the press registered, fires exactly on touch-down
     btn.classList.add('holding');
-    holdTO=setTimeout(()=>{ btn.classList.remove('holding'); doExit(); },1500);
+    holdTO=setTimeout(()=>{
+      btn.classList.remove('holding');
+      vibe([15,10,35]); // firmer confirm pulse — fires at the exact instant the dismiss actually happens
+      doExit();
+    },HOLD_MS);
   }
-  function cancelHold(){
+  function cancelHold(e){
+    if(e) e.preventDefault();
     btn.classList.remove('holding');
     clearTimeout(holdTO); holdTO=null;
   }
