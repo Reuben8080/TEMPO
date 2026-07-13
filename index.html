@@ -538,7 +538,11 @@ let notifGranted=false;
 async function askNotif(){
   if(!('Notification'in window))return;
   if(Notification.permission==='granted'){notifGranted=true;return}
-  if(Notification.permission!=='denied'){notifGranted=(await Notification.requestPermission())==='granted';}
+  if(Notification.permission==='denied')return;
+  // Only ever prompt once, ever — persisted across reloads/sessions.
+  if(localStorage.getItem('tempo_notif_asked'))return;
+  localStorage.setItem('tempo_notif_asked','1');
+  notifGranted=(await Notification.requestPermission())==='granted';
 }
 function notify(title,body){
   if(!notifGranted||document.visibilityState==='visible')return;
