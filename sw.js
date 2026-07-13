@@ -1,4 +1,4 @@
-const CACHE = 'tempo-v8'; // Bumped to force activation of the new index.html layers
+const CACHE = 'tempo-v9'; // Bumped to force activation of the new index.html layers
 const ASSETS = ['./', './manifest.json', './icon.svg'];
 
 // Install: cache assets
